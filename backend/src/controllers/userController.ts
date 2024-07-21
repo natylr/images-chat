@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import bcrypt from 'bcryptjs';
+const bcrypt = require('bcryptjs')
 import jwt from 'jsonwebtoken';
 import { User, IUser } from '../models/user';
 import { checkUsernameExists } from '../utils/checkUsernameExists';
@@ -15,7 +15,6 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
       password: hashedPassword
     });
 
-    // Save the user to the database
     await user.save();
 
     // Respond with the created user (excluding the password)
