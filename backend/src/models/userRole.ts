@@ -1,8 +1,7 @@
 import { Schema, Document, model, Types } from 'mongoose';
+import { IUserChatRoomReference } from '../interfaces/IUserChatRoomReference ';
 
-export interface IUserRole extends Document {
-  userID: Types.ObjectId;
-  chatRoomID: Types.ObjectId;
+export interface IUserRole extends Document, IUserChatRoomReference {
   role: string;
   assignedAt: Date;
 }
