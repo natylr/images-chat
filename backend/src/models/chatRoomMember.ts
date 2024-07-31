@@ -1,7 +1,6 @@
 import { Schema, Document, model, Types } from 'mongoose';
-import { checkUserIdExists } from '../middleware/checkUserIdExistsMiddleware';
-import { checkChatRoomIdExists } from '../middleware/checkChatRoomIdExistsMiddleware';
 import { IUserChatRoomReference } from '../interfaces/IUserChatRoomReference ';
+import { checkUserAndChatRoomId } from '../middleware/checkUserAndChatRoomId';
 
 export interface IChatRoomMember extends Document, IUserChatRoomReference {
   joinedAt: Date;
@@ -13,16 +12,6 @@ const chatRoomMemberSchema = new Schema<IChatRoomMember>({
   joinedAt: { type: Date, default: Date.now },
 });
 
-chatRoomMemberSchema.pre('save', async function (next) {
-  const checkUserIdExistsBound = checkUserIdExists.bind(this);
-  const checkChatRoomIdExistsBound = checkChatRoomIdExists.bind(this);
-  try {
-    await checkUserIdExistsBound(this.userID);
-    await checkChatRoomIdExistsBound(this.chatRoomID);
-  } catch (error) {
-    return next(error);
-  }
-  next();
-});
+chatRoomMemberSchema.pre('save', checkUserAndChatRoomId);
 
 export const ChatRoomMember = model<IChatRoomMember>('ChatRoomMember', chatRoomMemberSchema);
