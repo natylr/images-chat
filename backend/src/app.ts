@@ -1,7 +1,6 @@
 import express, { Application } from 'express';
-import {mongoUrl}  from './secret';
+import { connectToDatabase } from './utils/db';
 import bodyParser from 'body-parser';
-import mongoose from 'mongoose';
 import userRoutes from './routes/userRoutes';
 import chatRoomRoutes from './routes/chatRoomRoutes';
 import messageRoutes from './routes/messageRoutes';
@@ -30,10 +29,7 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-// Database connection
-mongoose.connect(mongoUrl).then(() => {
-  console.log("Connected to database");
-}).catch((e) => console.log(e));
+connectToDatabase();
 
 // Multer configuration
 const storage = multer.diskStorage({
