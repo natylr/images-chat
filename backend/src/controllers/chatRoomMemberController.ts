@@ -58,3 +58,18 @@ export const deleteChatRoomMemberById = async (req: Request, res: Response): Pro
     res.status(500).send(err);
   }
 };
+
+export const leaveChatRoom = async (req: Request, res: Response) => {
+  const { chatRoomId } = req.body;
+  const userId = req.body.user._id; // Assuming you have user ID available in request
+
+  try {
+    const result = await ChatRoomMember.findOneAndDelete({ chatRoomID: chatRoomId, userID: userId });
+    if (!result) {
+      return res.status(404).json({ message: 'User not found in chat room' });
+    }
+    res.status(200).json({ message: 'Successfully left the chat room' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error leaving the chat room', error });
+  }
+};
