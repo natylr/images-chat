@@ -15,7 +15,7 @@ interface IRolePopulated extends Omit<IRole, 'permissions'> {
   permissions: Types.ObjectId[];
 }
 
-export const checkPermissions = (permissionName: string) => {
+export const checkPermissions = (permissionName: string, customCheck?: (req: Request) => boolean) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.userId;
     const { chatRoomId } = req.body;
@@ -35,13 +35,18 @@ export const checkPermissions = (permissionName: string) => {
       }
 
       const permissions = userRole.role.permissions as unknown as Types.ObjectId[];
-      const permissionId = permission._id ;
+      const permissionId = permission._id;
 
       if (permissions && Array.isArray(permissions) && permissionId instanceof Types.ObjectId) {
         if (!permissions.includes(permissionId)) {
           return res.status(403).json({ message: 'Permission denied' });
         }
       } else {
+        return res.status(403).json({ message: 'Permission denied' });
+      }
+
+      // Run the custom check if provided
+      if (customCheck && !customCheck(req)) {
         return res.status(403).json({ message: 'Permission denied' });
       }
 
