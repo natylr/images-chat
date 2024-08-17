@@ -8,8 +8,8 @@ const router: Router = Router();
 router.post('/chatroommembers',verifyJWT, createChatRoomMember);
 router.get('/chatroommembers',verifyJWT, getAllChatRoomMembers);
 router.get('/chatroommembers/:id',verifyJWT, getChatRoomMemberById);
-router.put('/chatroommembers/:id',verifyJWT, updateChatRoomMemberById);
-router.delete('/chatroommembers/:id',verifyJWT, deleteChatRoomMemberById);
+router.put('/chatroommembers/:id',checkPermissions('ADD_MEMBER'),verifyJWT, updateChatRoomMemberById);
+router.delete('/chatroommembers/:id',checkPermissions('REMOVE_MEMBER'),verifyJWT, deleteChatRoomMemberById);
 router.post('/leaveChatRoom', verifyJWT, checkPermissions('LEAVE_CHAT_ROOM', verifyUserOwnsResource), leaveChatRoom);
 
 export default router;
