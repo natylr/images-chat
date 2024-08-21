@@ -5,11 +5,11 @@ import verifyJWT from '../middleware/verifyJWT';
 import verifyUserOwnsResource from '../middleware/verifyUserOwnsResource'
 const router: Router = Router();
 
-router.post('/chatroommembers',verifyJWT, createChatRoomMember);
-router.get('/chatroommembers',verifyJWT, getAllChatRoomMembers);
-router.get('/chatroommembers/:id',verifyJWT, getChatRoomMemberById);
-router.put('/chatroommembers/:id',checkPermissions('ADD_MEMBER'),verifyJWT, updateChatRoomMemberById);
-router.delete('/chatroommembers/:id',checkPermissions('REMOVE_MEMBER'),verifyJWT, deleteChatRoomMemberById);
+router.post('/chatroommembers', verifyJWT, createChatRoomMember);
+router.get('/chatroommembers', verifyJWT, getAllChatRoomMembers);
+router.get('/chatroommembers/:id', verifyJWT, getChatRoomMemberById);
+router.put('/chatroommembers/:id', verifyJWT, checkPermissions('ADD_MEMBER'), updateChatRoomMemberById);
+router.delete('/chatroommembers/:id', verifyJWT, checkPermissions('CREATE_MESSAGE'), deleteChatRoomMemberById);
 router.post('/leaveChatRoom', verifyJWT, checkPermissions('LEAVE_CHAT_ROOM', verifyUserOwnsResource), leaveChatRoom);
 
 export default router;
