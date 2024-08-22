@@ -8,10 +8,15 @@ const seedRoles = async () => {
   try {
     const permissions = await Permission.find();
 
-    const permissionMap = permissions.reduce((map, permission) => {
-      map[permission.name] = permission._id;
+    // Define the interface for the permission map
+    interface PermissionMap {
+      [key: string]: string; // Assuming the _id is of type string
+    }
+
+    const permissionMap: PermissionMap = permissions.reduce((map, permission) => {
+      map[permission.name] = permission._id.toString(); // Convert _id to string
       return map;
-    }, {});
+    }, {} as PermissionMap);
 
     const userPermissions = [
       permissionMap['CREATE_MESSAGE'],
