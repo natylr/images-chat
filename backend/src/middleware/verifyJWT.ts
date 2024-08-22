@@ -1,7 +1,5 @@
-import { verify, JsonWebTokenError } from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '../secret';
-
-type JwtVerifyError = JsonWebTokenError | Error;
 
 const verifyJWT = (req: any, res: any, next: any) => {
   const authHeader = req.headers?.authorization || req.headers?.Authorization;
@@ -12,7 +10,7 @@ const verifyJWT = (req: any, res: any, next: any) => {
 
   const token = authHeader.split(' ')[1];
 
-  jwt.verify(token, JWT_SECRET, (err:JwtVerifyError, decoded: any) => {
+  jwt.verify(token, JWT_SECRET, (err: jwt.VerifyErrors | null, decoded: any) => {
     if (err) {
       if (err.name === 'JsonWebTokenError') {
         return res.status(403).json({ message: 'Invalid Token', data: 'Forbidden' });
@@ -27,3 +25,4 @@ const verifyJWT = (req: any, res: any, next: any) => {
 };
 
 export default verifyJWT;
+
