@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 
-export interface IUserChatRoomReference {
+export interface IUserChatRoomReference{
     userID: Types.ObjectId;
     chatRoomID: Types.ObjectId;
   }

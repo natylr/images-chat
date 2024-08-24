@@ -1,7 +1,7 @@
 import mongoose, { Document, Types } from 'mongoose';
 import { checkChatRoomIdExists } from '../utils/checkChatRoomIdExists';
 import { checkUserIdExists } from '../utils/checkUserIdExists';
-import { IUserChatRoomReference } from '../interfaces/IUserChatRoomReference ';
+import { IUserChatRoomReference } from '../interfaces/IUserChatRoomReference';
 
 export const checkUserAndChatRoomId = async function(
   this: Document & IUserChatRoomReference, 

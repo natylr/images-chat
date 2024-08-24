@@ -1,5 +1,5 @@
 import { Schema, Document, model, Types } from 'mongoose';
-import { IUserChatRoomReference } from '../interfaces/IUserChatRoomReference ';
+import { IUserChatRoomReference } from '../interfaces/IUserChatRoomReference';
 import { checkUserAndChatRoomId } from '../middleware/checkUserAndChatRoomId';
 
 export interface IChatRoomMember extends Document, IUserChatRoomReference {
