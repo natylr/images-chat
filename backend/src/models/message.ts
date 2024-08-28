@@ -1,6 +1,5 @@
-import { Schema, Document, model, Types } from 'mongoose';
+import { Schema, Document, model, Types, Model } from 'mongoose';
 import { IUserChatRoomReference } from '../interfaces/IUserChatRoomReference';
-import { checkUserAndChatRoomId } from '../middleware/checkUserAndChatRoomId';
 
 export interface IMessage extends Document, IUserChatRoomReference {
   content: Types.ObjectId[];
@@ -13,5 +12,17 @@ const messageSchema = new Schema<IMessage>({
   content: [{ type: Schema.Types.ObjectId, ref: 'Image', required: true }],
   timestamp: { type: Date, default: Date.now }
 });
-messageSchema.pre('save', checkUserAndChatRoomId);
-export const Message = model<IMessage>('Message', messageSchema);
+
+let Message: Model<IMessage>;
+
+async function setupMessageModel() {
+  const { checkUserAndChatRoomId } = await import('../middleware/checkUserAndChatRoomId');
+  messageSchema.pre('save', checkUserAndChatRoomId);
+  Message = model<IMessage>('Message', messageSchema);
+}
+
+setupMessageModel().catch(error => {
+  console.error('Error setting up Message model:', error);
+});
+
+export { Message };
