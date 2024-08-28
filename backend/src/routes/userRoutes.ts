@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import { createUser, getAllUsers, getUserById, updateUserById, deleteUserById, isUsernameAvailable, loginUser } from '../controllers/userController';
-import { checkUsernameExistsMiddleware } from '../middleware/checkUsernameExistsMiddleware';
+import { isUsernameAvailableMiddleware } from '../middleware/isUsernameAvailableMiddleware';
 import verifyJWT from '../middleware/verifyJWT';
 const router = Router();
 
-router.post('/users', checkUsernameExistsMiddleware, createUser);
+router.post('/users', isUsernameAvailableMiddleware, createUser);
 router.get('/users',verifyJWT, getAllUsers);
 router.get('/users/:id',verifyJWT, getUserById);
 router.put('/users/:id',verifyJWT, updateUserById);
