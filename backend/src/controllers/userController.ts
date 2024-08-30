@@ -7,12 +7,13 @@ import { JWT_SECRET } from '../secret';
 
 export const createUser = async (req: Request, res: Response): Promise<void> => {
   try {
+
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
     // Create a new user with the hashed password
     const user: IUser = new User({
       ...req.body,
-      password: hashedPassword
+      passwordHash: hashedPassword
     });
 
     await user.save();
@@ -21,6 +22,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
     const userResponse = { ...user.toObject(), password: undefined };
     res.status(201).send(userResponse);
   } catch (err) {
+
     res.status(400).send(err);
   }
 };
@@ -96,6 +98,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     // Find the user by username
     const user: IUser | null = await User.findOne({ username });
     if (!user) {
+
       res.status(400).send({ message: 'Invalid username or password' });
       return;
     }
@@ -103,6 +106,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     // Compare the provided password with the stored hashed password
     const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
     if (!isPasswordValid) {
+
       res.status(400).send({ message: 'Invalid username or password' });
       return;
     }
