@@ -3,20 +3,19 @@ import { IUserRole, UserRole } from '../models/userRole';
 import { Permission } from '../models/permission';
 import { IRole } from '../interfaces/IRole';
 import { IPermission } from '../interfaces/IPermission';
+import { IUserIdRequest } from '../interfaces/IUserIdRequest';
 import { Types } from 'mongoose';
 
-// Define the populated user role interface
 interface IUserRolePopulated extends Omit<IUserRole, 'role'> {
   role: IRolePopulated;
 }
 
-// Define the populated role interface
 interface IRolePopulated extends Omit<IRole, 'permissions'> {
   permissions: Types.ObjectId[];
 }
 
-export const checkPermissions = (permissionName: string, customCheck?: (req: Request) => boolean) => {
-  return async (req: Request, res: Response, next: NextFunction) => {
+export const checkPermissions = (permissionName: string, customCheck?: (req: IUserIdRequest) => boolean) => {
+  return async (req: IUserIdRequest, res: Response, next: NextFunction) => {
     const userId = req.userId;
     const { chatRoomId } = req.body;
 
@@ -25,7 +24,7 @@ export const checkPermissions = (permissionName: string, customCheck?: (req: Req
       if (!userRoleDoc) {
         return res.status(403).json({ message: 'No role found for user in this chat room' });
       }
-
+      
       // Assert the populated role field
       const userRole = userRoleDoc.toObject() as IUserRolePopulated;
 

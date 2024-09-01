@@ -1,7 +1,7 @@
-import 'express';
+import { Types } from "mongoose";
 
 declare module 'express' {
   export interface Request {
-    userId?: string;
+    userId?: Types.ObjectId; // or Types.ObjectId if you're using MongoDB ObjectId
   }
 }
