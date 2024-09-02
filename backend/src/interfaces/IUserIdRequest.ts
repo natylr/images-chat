@@ -1,7 +1,6 @@
 import { Request } from 'express';
 import { Types } from 'mongoose';
 
-export interface IUserIdRequest<T = any> extends Request {
+export interface IUserIdRequest extends Request {
   userId?: Types.ObjectId;
-  body?: T;
 }
