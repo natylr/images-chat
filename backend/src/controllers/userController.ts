@@ -120,7 +120,7 @@ export const isUsernameAvailable = async (req: Request, res: Response) => {
     return res.status(400).json({ message: 'Username is required' });
   }
 
-  const exists = await checkUsernameExists(username as string); 
+  const exists = await checkUsernameExists(username as string);
 
   if (exists) {
     return res.status(400).json({ message: 'Username already exists' });
@@ -133,28 +133,22 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const { username, password } = req.body;
 
-    // Find the user by username
     const user: IUser | null = await User.findOne({ username });
     if (!user) {
-
-      res.status(400).send({ message: 'Invalid username or password' });
-      return;
+      res.status(400).json({ message: 'Invalid username or password' });
     }
+    else {
+      const isPasswordValid = await validatePassword(password, user.hashedPassword);
+      if (!isPasswordValid) {
+        res.status(400).json({ message: 'Invalid username or password' });
+      }
 
-    // Compare the provided password with the stored hashed password
-    const isPasswordValid = await bcrypt.compare(password, user.hashedPassword);
-    if (!isPasswordValid) {
+      const token = jwt.sign({ id: user._id, username: user.username }, JWT_SECRET, { expiresIn: '1h' });
+      const sanitizedUser = removeHashedPassword(user);
 
-      res.status(400).send({ message: 'Invalid username or password' });
-      return;
+      res.status(200).json({ token, user: sanitizedUser });
     }
-
-    // Generate a JWT token
-    const token = jwt.sign({ id: user._id, username: user.username }, JWT_SECRET, { expiresIn: '1h' });
-
-    // Respond with the token
-    res.status(200).send({ token });
   } catch (err) {
-    res.status(500).send(err);
+    res.status(500).json({ message: 'Internal server error', error: err.message });
   }
 };
