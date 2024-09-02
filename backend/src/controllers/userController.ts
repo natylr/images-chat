@@ -5,6 +5,7 @@ import { User, IUser } from '../models/user';
 import { checkUsernameExists } from '../utils/checkUsernameExists';
 import { JWT_SECRET } from '../secret';
 import { removeHashedPassword } from '../utils/removeHashedPassword';
+import { validatePassword } from '../utils/validatePassword';
 
 export const createUser = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -56,12 +57,44 @@ export const getUserById = async (req: Request, res: Response): Promise<void> =>
 
 export const updateUserById = async (req: Request, res: Response): Promise<void> => {
   try {
-    const user: IUser | null = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const { id } = req.params;
+    const { password, oldPassword, ...updateData } = req.body;
+
+    const user: IUser | null = await User.findById(id);
+
     if (!user) {
       res.status(404).send();
       return;
     }
-    res.status(200).send(user);
+
+    // If password is being updated, validate the old password first
+    if (password) {
+      if (!oldPassword) {
+        res.status(400).json({ message: 'Previous password is required' });
+        return;
+      }
+
+      const isPasswordValid = await validatePassword(oldPassword, user.hashedPassword);
+
+      if (!isPasswordValid) {
+        res.status(400).json({ message: 'Invalid previous password' });
+        return;
+      }
+
+      // Hash the new password
+      updateData.hashedPassword = await bcrypt.hash(password, 10);
+    }
+
+    // Update the user
+    const updatedUser: IUser | null = await User.findByIdAndUpdate(id, updateData, { new: true, runValidators: true });
+
+    if (!updatedUser) {
+      res.status(404).send();
+      return;
+    }
+
+    const sanitizedUser = removeHashedPassword(updatedUser);
+    res.status(200).send(sanitizedUser);
   } catch (err) {
     res.status(400).send(err);
   }
