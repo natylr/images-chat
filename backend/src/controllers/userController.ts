@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import { User, IUser } from '../models/user';
 import { checkUsernameExists } from '../utils/checkUsernameExists';
 import { JWT_SECRET } from '../secret';
+import { removeHashedPassword } from '../utils/removeHashedPassword';
 
 export const createUser = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -30,20 +31,24 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
 export const getAllUsers = async (req: Request, res: Response): Promise<void> => {
   try {
     const users: IUser[] = await User.find();
-    res.status(200).send(users);
-  } catch (err) {
-    res.status(500).send(err);
+    const sanitizedUsers = users.map(removeHashedPassword);
+    res.status(200).json(sanitizedUsers);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to retrieve users', error });
   }
 };
 
 export const getUserById = async (req: Request, res: Response): Promise<void> => {
   try {
     const user: IUser | null = await User.findById(req.params.id);
+
     if (!user) {
       res.status(404).send();
       return;
     }
-    res.status(200).send(user);
+    const santiizedUser = removeHashedPassword(user)
+
+    res.status(200).send(santiizedUser);
   } catch (err) {
     res.status(500).send(err);
   }
