@@ -6,7 +6,7 @@ export interface IUser extends Document {
   fname: string;
   lname: string;
   email: string;
-  passwordHash: string;
+  hashedPassword: string;
   address: string;
   city: string;
   phone: string;
@@ -20,7 +20,7 @@ const userSchema = new Schema<IUser>({
   fname: { type: String, required: true },
   lname: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  passwordHash: { type: String, required: true },
+  hashedPassword: { type: String, required: true },
   address: { type: String},
   city: { type: String},
   phone: { type: String, required: true },

@@ -13,7 +13,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
     // Create a new user with the hashed password
     const user: IUser = new User({
       ...req.body,
-      passwordHash: hashedPassword
+      hashedPassword: hashedPassword
     });
 
     await user.save();
@@ -104,7 +104,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     }
 
     // Compare the provided password with the stored hashed password
-    const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
+    const isPasswordValid = await bcrypt.compare(password, user.hashedPassword);
     if (!isPasswordValid) {
 
       res.status(400).send({ message: 'Invalid username or password' });
