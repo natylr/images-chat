@@ -11,7 +11,7 @@ export interface IChatRoom extends Document {
 const chatRoomSchema = new Schema<IChatRoom>({
   name: { type: String, required: true },
   primaryImageURL: { type: String},
-  createdAt: { type: Date, default: Date.now },
+  createdAt: { type: Date, default: Date.now, immutable: true },
   updatedAt: { type: Date, default: Date.now }
 });
 

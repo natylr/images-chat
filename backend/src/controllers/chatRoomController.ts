@@ -3,14 +3,16 @@ import { ChatRoom, IChatRoom } from '../models/chatRoom';
 
 export const createChatRoom = async (req: Request, res: Response): Promise<void> => {
   try {
-    const chatRoom: IChatRoom = new ChatRoom(req.body);
+    // Remove updatedAt from the request body if it exists
+    const { updatedAt, ...chatRoomData } = req.body;
+
+    const chatRoom: IChatRoom = new ChatRoom(chatRoomData);
     await chatRoom.save();
     res.status(201).send(chatRoom);
   } catch (err) {
     res.status(400).send(err);
   }
 };
-
 export const getAllChatRooms = async (req: Request, res: Response): Promise<void> => {
   try {
     const chatRooms: IChatRoom[] = await ChatRoom.find();
@@ -38,7 +40,8 @@ export const updateChatRoomById = async (req: Request, res: Response): Promise<v
     // Extract only the fields that are allowed to be updated
     const updates = {
       name: req.body.name,
-      primaryImageURL: req.body.primaryImageURL
+      primaryImageURL: req.body.primaryImageURL,
+      updatedAt: new Date() 
     };
 
     // Filter out undefined properties to prevent deletion
@@ -52,7 +55,12 @@ export const updateChatRoomById = async (req: Request, res: Response): Promise<v
       { new: true, runValidators: true }
     );
 
-    // ... rest of the code
+    if (!chatRoom) {
+      res.status(404).send();
+      return;
+    }
+
+    res.status(200).send(chatRoom);
   } catch (err) {
     res.status(400).send(err);
   }
