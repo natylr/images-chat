@@ -3,12 +3,14 @@ import { handleDeleteChatRoomCascade } from '../middleware/handleDeleteChatRoomC
 
 export interface IChatRoom extends Document {
   name: string;
+  primaryImageURL: string,
   createdAt: Date;
   updatedAt: Date;
 }
 
 const chatRoomSchema = new Schema<IChatRoom>({
   name: { type: String, required: true },
+  primaryImageURL: { type: String},
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });
