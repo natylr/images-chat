@@ -136,8 +136,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     const user: IUser | null = await User.findOne({ username });
     if (!user) {
       res.status(400).json({ message: 'Invalid username or password' });
-    }
-    else {
+    } else {
       const isPasswordValid = await validatePassword(password, user.hashedPassword);
       if (!isPasswordValid) {
         res.status(400).json({ message: 'Invalid username or password' });
@@ -149,6 +148,11 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       res.status(200).json({ token, user: sanitizedUser });
     }
   } catch (err) {
-    res.status(500).json({ message: 'Internal server error', error: err.message });
+    // Type guard to check if err is an instance of Error
+    if (err instanceof Error) {
+      res.status(500).json({ message: 'Internal server error', error: err.message });
+    } else {
+      res.status(500).json({ message: 'Internal server error', error: String(err) });
+    }
   }
 };
