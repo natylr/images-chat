@@ -9,7 +9,7 @@ router.post('/chatroommembers', verifyJWT, createChatRoomMember);
 router.get('/chatroommembers', verifyJWT, getAllChatRoomMembers);
 router.get('/chatroommembers/:id', verifyJWT, getChatRoomMemberById);
 router.put('/chatroommembers/:id', verifyJWT, checkPermissions('ADD_MEMBER'), updateChatRoomMemberById);
-router.delete('/chatroommembers/:id', verifyJWT, checkPermissions('CREATE_MESSAGE'), deleteChatRoomMemberById);
+router.delete('/chatroommembers/:id', verifyJWT, checkPermissions('REMOVE_MEMBER'), deleteChatRoomMemberById);
 router.post('/leaveChatRoom', verifyJWT, checkPermissions('LEAVE_CHAT_ROOM', verifyUserOwnsResource), leaveChatRoom);
 
 export default router;
