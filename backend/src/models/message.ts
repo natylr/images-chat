@@ -1,5 +1,6 @@
 import { Schema, Document, model, Types, Model } from 'mongoose';
 import { IUserChatRoomReference } from '../interfaces/IUserChatRoomReference';
+import { setupMessageMiddleware } from '../middleware/messageMiddleware';
 
 export interface IMessage extends Document, IUserChatRoomReference {
   content: Types.ObjectId[];
@@ -13,16 +14,14 @@ const messageSchema = new Schema<IMessage>({
   timestamp: { type: Date, default: Date.now }
 });
 
-let Message: Model<IMessage>;
-
-async function setupMessageModel() {
-  const { checkUserAndChatRoomId } = await import('../middleware/checkUserAndChatRoomId');
-  messageSchema.pre('save', checkUserAndChatRoomId);
-  Message = model<IMessage>('Message', messageSchema);
+async function initializeMessageModel() {
+  await setupMessageMiddleware(messageSchema);
 }
 
-setupMessageModel().catch(error => {
+initializeMessageModel().catch(error => {
   console.error('Error setting up Message model:', error);
 });
+
+const Message = model<IMessage>('Message', messageSchema);
 
 export { Message };
