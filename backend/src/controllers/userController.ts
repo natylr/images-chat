@@ -21,9 +21,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
     await user.save();
     const sanitizedUser = removeHashedPassword(user);
 
-    // Respond with the created user (excluding the password)
-    const userResponse = { sanitizedUser, password: undefined };
-    res.status(201).send(userResponse);
+    res.status(201).send(sanitizedUser);
   } catch (err) {
 
     res.status(400).send(err);
