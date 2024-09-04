@@ -4,14 +4,14 @@ import { setupMessageMiddleware } from '../middleware/messageMiddleware';
 
 export interface IMessage extends Document, IUserChatRoomReference {
   content: Types.ObjectId[];
-  timestamp: Date;
+  timeStamp: Date;
 }
 
 const messageSchema = new Schema<IMessage>({
   userID: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   chatRoomID: { type: Schema.Types.ObjectId, ref: 'ChatRoom', required: true },
   content: [{ type: Schema.Types.ObjectId, ref: 'Image', required: true }],
-  timestamp: { type: Date, default: Date.now }
+  timeStamp: { type: Date, default: Date.now }
 });
 
 async function initializeMessageModel() {
