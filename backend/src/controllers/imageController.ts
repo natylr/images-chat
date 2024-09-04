@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { Image, IImage } from '../models/image';
+import { NullImage } from '../models/nullImage';
 
 // Create an image
 export const createImage = async (req: Request, res: Response): Promise<void> => {
@@ -26,10 +27,9 @@ export const getAllImages = async (req: Request, res: Response): Promise<void> =
 // Get an image by ID
 export const getImageById = async (req: Request, res: Response): Promise<void> => {
   try {
-    const image: IImage | null = await Image.findById(req.params.id);
+    let image: IImage | null = await Image.findById(req.params.id);
     if (!image) {
-      res.status(404).send();
-      return;
+      image = new NullImage() as IImage;
     }
     res.status(200).send(image);
   } catch (err) {
