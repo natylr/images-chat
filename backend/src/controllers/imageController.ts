@@ -4,7 +4,8 @@ import { Image, IImage } from '../models/image';
 // Create an image
 export const createImage = async (req: Request, res: Response): Promise<void> => {
   try {
-    const image: IImage = new Image(req.body);
+    const imageData = { ...req.body, createAt: new Date() }; 
+    const image: IImage = new Image(imageData);
     await image.save();
     res.status(201).send(image);
   } catch (err) {
