@@ -3,7 +3,8 @@ import { Message, IMessage } from '../models/message';
 
 export const createMessage = async (req: Request, res: Response): Promise<void> => {
   try {
-    const message: IMessage = new Message(req.body);
+    const messageData = { ...req.body, timeStamp: new Date() }; 
+    const message: IMessage = new Message(messageData);
     await message.save();
     res.status(201).send(message);
   } catch (error) {
@@ -35,7 +36,8 @@ export const getMessageById = async (req: Request, res: Response): Promise<void>
 
 export const updateMessageById = async (req: Request, res: Response): Promise<void> => {
   try {
-    const message: IMessage | null = await Message.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const updateData = { ...req.body, timeStamp: new Date() }; 
+    const message: IMessage | null = await Message.findByIdAndUpdate(req.params.id, updateData, { new: true, runValidators: true });
     if (!message) {
       res.status(404).send();
       return;
