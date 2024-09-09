@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { Image, IImage } from '../models/image';
 import { NullImage } from '../models/nullImage';
+import { getImagesByCategoryName } from '../services/imageService';
 
 // Create an image
 export const createImage = async (req: Request, res: Response): Promise<void> => {
@@ -62,5 +63,15 @@ export const deleteImageById = async (req: Request, res: Response): Promise<void
     res.status(200).send(image);
   } catch (err) {
     res.status(500).send(err);
+  }
+};
+
+// Get images by category name
+export const getImagesByCategoryNameHandler = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const images = await getImagesByCategoryName(req.params.categoryName);
+    res.status(200).send(images);
+  } catch (err) {
+    res.status(500).send({ error: err.message });
   }
 };
