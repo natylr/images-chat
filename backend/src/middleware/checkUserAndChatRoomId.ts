@@ -1,4 +1,4 @@
-import { UserChatRoomValidator } from '../services/UserChatRoomValidator';
+import { UserChatRoomValidator } from '../services/userChatRoomValidator';
 import { Document } from 'mongoose';
 import { IUserChatRoomReference } from '../interfaces/IUserChatRoomReference';
 
