@@ -1,5 +1,5 @@
 import * as jwt from 'jsonwebtoken';
-import { JWT_SECRET } from '../secret';
+import { JWT_SECRET } from '../../secret';
 
 const verifyJWT = (req: any, res: any, next: any) => {
   const authHeader = req.headers?.authorization || req.headers?.Authorization;

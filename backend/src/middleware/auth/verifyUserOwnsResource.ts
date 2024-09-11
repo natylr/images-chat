@@ -1,4 +1,4 @@
-import { IUserIdRequest } from '../interfaces/IUserIdRequest';
+import { IUserIdRequest } from '../../interfaces/IUserIdRequest';
 import { Types } from 'mongoose';
 
 const verifyUserOwnsResource = (req: IUserIdRequest): boolean => {

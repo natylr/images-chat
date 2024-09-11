@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { createChatRoom, getAllChatRooms, getChatRoomById, updateChatRoomById, deleteChatRoomById } from '../controllers/chatRoomController'
-import verifyJWT from '../middleware/verifyJWT';
+import verifyJWT from '../middleware/auth/verifyJWT';
 import { checkPermissions } from '../middleware/permissions/checkPermissions';
 const router: Router = Router();
 
