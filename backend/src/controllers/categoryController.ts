@@ -4,8 +4,8 @@ import { Category } from '../models/category';
 // Create a new category
 export const createCategory = async (req: Request, res: Response) => {
     try {
-        const { name } = req.body;
-        const newCategory = new Category({ name });
+        const categoryData = { ...req.body, createdAt: new Date() }; 
+        const newCategory = new Category(categoryData);
         await newCategory.save();
         res.status(201).json(newCategory);
     } catch (error) {
