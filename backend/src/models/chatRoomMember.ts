@@ -1,6 +1,7 @@
 import { Schema, Document, model, Types } from 'mongoose';
 import { IUserChatRoomReference } from '../interfaces/IUserChatRoomReference';
 import { checkUserAndChatRoomId } from '../middleware/checkUserAndChatRoomId';
+import { updateChatRoomTimestamp } from '../utils/updateChatRoomTimestamp';
 
 export interface IChatRoomMember extends Document, IUserChatRoomReference {
   joinedAt: Date;
@@ -14,4 +15,18 @@ const chatRoomMemberSchema = new Schema<IChatRoomMember>({
 
 chatRoomMemberSchema.pre('save', checkUserAndChatRoomId);
 
+chatRoomMemberSchema.post('save', async function (doc: IChatRoomMember) {
+  await updateChatRoomTimestamp(doc.chatRoomID);
+});
+
+chatRoomMemberSchema.post('findOneAndUpdate', async function (doc: IChatRoomMember | null) {
+  if (doc) {
+    await updateChatRoomTimestamp(doc.chatRoomID);
+  }
+});
+chatRoomMemberSchema.post('findOneAndDelete', async function (doc: IChatRoomMember | null) {
+  if (doc) {
+    await updateChatRoomTimestamp(doc.chatRoomID);
+  }
+});
 export const ChatRoomMember = model<IChatRoomMember>('ChatRoomMember', chatRoomMemberSchema);
