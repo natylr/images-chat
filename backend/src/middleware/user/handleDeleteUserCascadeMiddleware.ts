@@ -4,7 +4,7 @@ import {UserStatus} from '../../models/userStatus';
 import {UserRole} from '../../models/userRole'
 
 // Middleware function for cascading delete
-export const handleDeleteUserCascade  = async function(this: Document, next: Function) {
+export const handleDeleteUserCascadeMiddlware  = async function(this: Document, next: Function) {
   const userId = this._id as Types.ObjectId;
 
   // Delete all UserChatRoom entries associated with this User

@@ -1,14 +1,14 @@
 import { Router } from 'express';
 import { createChatRoom, getAllChatRooms, getChatRoomById, updateChatRoomById, deleteChatRoomById } from '../controllers/chatRoomController'
-import verifyJWT from '../middleware/auth/verifyJWT';
+import verifyJWTMiddleware from '../middleware/auth/verifyJWTverifyJWTMiddleware ';
 import { checkPermissions } from '../middleware/permissions/checkPermissions';
 const router: Router = Router();
 
-router.post('/chatrooms',verifyJWT, createChatRoom);
-router.get('/chatrooms',verifyJWT, getAllChatRooms);
-router.get('/chatrooms/:id',verifyJWT, getChatRoomById);
-router.put('/chatrooms/:id',verifyJWT, checkPermissions("UPDATE_CHATROOM"), updateChatRoomById);
-router.delete('/chatrooms/:id',verifyJWT, checkPermissions("DELETE_CHATROOM"), deleteChatRoomById);
+router.post('/chatrooms',verifyJWTMiddleware, createChatRoom);
+router.get('/chatrooms',verifyJWTMiddleware, getAllChatRooms);
+router.get('/chatrooms/:id',verifyJWTMiddleware, getChatRoomById);
+router.put('/chatrooms/:id',verifyJWTMiddleware, checkPermissions("UPDATE_CHATROOM"), updateChatRoomById);
+router.delete('/chatrooms/:id',verifyJWTMiddleware, checkPermissions("DELETE_CHATROOM"), deleteChatRoomById);
 
 export default router;
 

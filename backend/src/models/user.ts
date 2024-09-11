@@ -1,5 +1,5 @@
 import { Schema, Document, model } from 'mongoose';
-import { handleDeleteUserCascade}from '../middleware/user/handleDeleteUserCascadeMiddleware';
+import { handleDeleteUserCascadeMiddlware}from '../middleware/user/handleDeleteUserCascadeMiddleware';
 
 export interface IUser extends Document {
   username: string;
@@ -28,8 +28,8 @@ const userSchema = new Schema<IUser>({
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });
-userSchema.pre('deleteOne', handleDeleteUserCascade);
-userSchema.pre('deleteMany', handleDeleteUserCascade);
-userSchema.pre('findOneAndDelete', handleDeleteUserCascade);
+userSchema.pre('deleteOne', handleDeleteUserCascadeMiddlware);
+userSchema.pre('deleteMany', handleDeleteUserCascadeMiddlware);
+userSchema.pre('findOneAndDelete', handleDeleteUserCascadeMiddlware);
 
 export const User = model<IUser>('User', userSchema);

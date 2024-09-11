@@ -1,7 +1,7 @@
 import * as jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '../../secret';
 
-const verifyJWT = (req: any, res: any, next: any) => {
+const verifyJWTMiddleware = (req: any, res: any, next: any) => {
   const authHeader = req.headers?.authorization || req.headers?.Authorization;
 
   if (!authHeader?.startsWith('Bearer ')) {
@@ -24,5 +24,5 @@ const verifyJWT = (req: any, res: any, next: any) => {
   });
 };
 
-export default verifyJWT;
+export default verifyJWTMiddleware;
 
