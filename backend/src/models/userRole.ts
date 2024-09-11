@@ -1,6 +1,6 @@
 import { Schema, Document, model, Types } from 'mongoose';
 import { IUserChatRoomReference } from '../interfaces/IUserChatRoomReference';
-import { checkUserAndChatRoomId } from '../middleware/checkUserAndChatRoomId';
+import { checkChatRoomIdExistsMiddleware } from '../middleware/chatRoom/checkChatRoomIdExistsMiddleware';
 
 export interface IUserRole extends Document, IUserChatRoomReference {
   role: Types.ObjectId;
@@ -13,5 +13,5 @@ const userRoleSchema = new Schema<IUserRole>({
   role: { type: Schema.Types.ObjectId, ref: 'Role', required: true },
   assignedAt: { type: Date, default: Date.now }
 });
-userRoleSchema.pre('save', checkUserAndChatRoomId)
+userRoleSchema.pre('save', checkChatRoomIdExistsMiddleware)
 export const UserRole = model<IUserRole>('UserRole', userRoleSchema);

@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
-import { IUserRole, UserRole } from '../models/userRole';
-import { Permission } from '../models/permission';
-import { IRole } from '../interfaces/IRole';
-import { IPermission } from '../interfaces/IPermission';
-import { IUserIdRequest } from '../interfaces/IUserIdRequest';
+import { IUserRole, UserRole } from '../../models/userRole';
+import { Permission } from '../../models/permission';
+import { IRole } from '../../interfaces/IRole';
+import { IPermission } from '../../interfaces/IPermission';
+import { IUserIdRequest } from '../../interfaces/IUserIdRequest';
 import { Types } from 'mongoose';
 
 interface IUserRolePopulated extends Omit<IUserRole, 'role'> {

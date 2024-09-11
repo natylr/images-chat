@@ -1,6 +1,6 @@
-import { UserChatRoomValidator } from '../services/userChatRoomValidator';
+import { UserChatRoomValidator } from '../../services/userChatRoomValidator';
 import { Document } from 'mongoose';
-import { IUserChatRoomReference } from '../interfaces/IUserChatRoomReference';
+import { IUserChatRoomReference } from '../../interfaces/IUserChatRoomReference';
 
 export const checkUserAndChatRoomId = async function (
     this: Document & IUserChatRoomReference,

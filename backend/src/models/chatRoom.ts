@@ -1,5 +1,5 @@
 import { Schema, Document, model } from 'mongoose';
-import { handleDeleteChatRoomCascade } from '../middleware/handleDeleteChatRoomCascadeMiddleware';
+import { handleDeleteChatRoomCascade } from '../middleware/chatRoom/handleDeleteChatRoomCascadeMiddleware';
 
 export interface IChatRoom extends Document {
   name: string;

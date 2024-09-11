@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { createUser, getAllUsers, getUserById, updateUserById, deleteUserById, isUsernameAvailable, loginUser } from '../controllers/userController';
-import { isUsernameAvailableMiddleware } from '../middleware/isUsernameAvailableMiddleware';
+import { isUsernameAvailableMiddleware } from '../middleware/user/isUsernameAvailableMiddleware';
 import verifyJWT from '../middleware/verifyJWT';
 const router = Router();
 

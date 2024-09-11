@@ -1,6 +1,6 @@
 import { Schema, Document, model, Types, Model } from 'mongoose';
 import { IUserChatRoomReference } from '../interfaces/IUserChatRoomReference';
-import { setupMessageMiddleware } from '../middleware/messageMiddleware';
+import { setupMessageMiddleware } from '../middleware/message/messageMiddleware';
 
 export interface IMessage extends Document, IUserChatRoomReference {
   content: Types.ObjectId[];

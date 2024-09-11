@@ -1,7 +1,7 @@
 import { Document, Types } from 'mongoose';
-import {ChatRoomMember} from '../models/chatRoomMember';
-import {UserStatus} from '../models/userStatus';
-import {UserRole} from '../models/userRole'
+import {ChatRoomMember} from '../../models/chatRoomMember';
+import {UserStatus} from '../../models/userStatus';
+import {UserRole} from '../../models/userRole'
 
 // Middleware function for cascading delete
 export const handleDeleteUserCascade  = async function(this: Document, next: Function) {

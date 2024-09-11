@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { createChatRoom, getAllChatRooms, getChatRoomById, updateChatRoomById, deleteChatRoomById } from '../controllers/chatRoomController'
 import verifyJWT from '../middleware/verifyJWT';
-import { checkPermissions } from '../middleware/checkPermissions';
+import { checkPermissions } from '../middleware/permissions/checkPermissions';
 const router: Router = Router();
 
 router.post('/chatrooms',verifyJWT, createChatRoom);

@@ -1,6 +1,6 @@
 import { Document, Types } from 'mongoose';
-import {ChatRoomMember} from '../models/chatRoomMember';
-import {Message} from '../models/message';
+import {ChatRoomMember} from '../../models/chatRoomMember';
+import {Message} from '../../models/message';
 
 
 // Middleware function for cascading delete

@@ -1,5 +1,5 @@
 import { Schema, Document, model } from 'mongoose';
-import { handleDeleteUserCascade}from '../middleware/handleDeleteUserCascadeMiddleware';
+import { handleDeleteUserCascade}from '../middleware/user/handleDeleteUserCascadeMiddleware';
 
 export interface IUser extends Document {
   username: string;

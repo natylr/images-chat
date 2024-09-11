@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { Document, Types } from 'mongoose';
-import {checkUserIdExists} from '../utils/checkUserIdExists';
+import {checkUserIdExists} from '../../utils/checkUserIdExists';
 
 export const checkUserIdExistsMiddleware = async function(this:Document, next: Function)  {
   try {

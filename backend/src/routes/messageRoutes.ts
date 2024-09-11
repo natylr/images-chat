@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { createMessage, getAllMessages, getMessageById, updateMessageById, deleteMessageById } from '../controllers/messageController';
 import verifyJWT from '../middleware/verifyJWT';
-import { checkPermissions } from '../middleware/checkPermissions';
+import { checkPermissions } from '../middleware/permissions/checkPermissions';
 import verifyUserOwnsResource from '../middleware/verifyUserOwnsResource';
 
 const router: Router = Router();

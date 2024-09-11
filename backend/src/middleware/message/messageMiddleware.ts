@@ -1,9 +1,9 @@
-import { updateChatRoomTimestamp } from '../utils/updateChatRoomTimestamp';
+import { updateChatRoomTimestamp } from '../../utils/updateChatRoomTimestamp';
 import { Schema } from 'mongoose';
-import { IMessage } from '../models/message';
+import { IMessage } from '../../models/message';
 
 export async function setupMessageMiddleware(schema: Schema) {
-  const { checkUserAndChatRoomId } = await import('../middleware/checkUserAndChatRoomId');
+  const { checkUserAndChatRoomId } = await import('../../middleware/message/checkUserAndChatRoomId');
 
   schema.pre('save', checkUserAndChatRoomId);
 

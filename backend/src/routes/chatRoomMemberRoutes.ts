@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { checkPermissions } from '../middleware/checkPermissions';
+import { checkPermissions } from '../middleware/permissions/checkPermissions';
 import { createChatRoomMember, getAllChatRoomMembers, getChatRoomMemberById, deleteChatRoomMemberById, leaveChatRoom } from '../controllers/chatRoomMemberController';
 import verifyJWT from '../middleware/verifyJWT';
 import verifyUserOwnsResource from '../middleware/verifyUserOwnsResource'
