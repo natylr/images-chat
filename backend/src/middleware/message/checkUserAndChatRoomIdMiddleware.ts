@@ -2,7 +2,7 @@ import { UserChatRoomValidator } from '../../services/userChatRoomValidator';
 import { Document } from 'mongoose';
 import { IUserChatRoomReference } from '../../interfaces/IUserChatRoomReference';
 
-export const checkUserAndChatRoomId = async function (
+export const checkUserAndChatRoomIdMiddleware = async function (
     this: Document & IUserChatRoomReference,
     next: Function
 ) {

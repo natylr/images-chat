@@ -3,7 +3,7 @@ import { Schema } from 'mongoose';
 import { IMessage } from '../../models/message';
 
 export async function setupMessageMiddleware(schema: Schema) {
-  const { checkUserAndChatRoomId } = await import('../../middleware/message/checkUserAndChatRoomId');
+  const { checkUserAndChatRoomIdMiddleware: checkUserAndChatRoomId } = await import('../../middleware/message/checkUserAndChatRoomId');
 
   schema.pre('save', checkUserAndChatRoomId);
 
