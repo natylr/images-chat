@@ -4,8 +4,8 @@ import jwt from 'jsonwebtoken';
 import { User, IUser } from '../models/user';
 import { checkUsernameExists } from '../utils/validation/checkUsernameExists';
 import { JWT_SECRET } from '../secret';
-import { removeHashedPassword } from '../utils/removeHashedPassword';
-import { validatePassword } from '../utils/validatePassword';
+import { removeHashedPassword } from '../utils/transformation/removeHashedPassword';
+import { validatePassword } from '../utils/security/validatePassword';
 
 export const createUser = async (req: Request, res: Response): Promise<void> => {
   try {
