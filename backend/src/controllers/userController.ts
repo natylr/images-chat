@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 const bcrypt = require('bcryptjs')
 import jwt from 'jsonwebtoken';
 import { User, IUser } from '../models/user';
-import { checkUsernameExists } from '../utils/checkUsernameExists';
+import { checkUsernameExists } from '../utils/validation/checkUsernameExists';
 import { JWT_SECRET } from '../secret';
 import { removeHashedPassword } from '../utils/removeHashedPassword';
 import { validatePassword } from '../utils/validatePassword';

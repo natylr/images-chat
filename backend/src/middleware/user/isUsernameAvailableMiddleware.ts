@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { checkUsernameExists } from '../../utils/checkUsernameExists';
+import { checkUsernameExists } from '../../utils/validation/checkUsernameExists';
 
 export const isUsernameAvailableMiddleware  = async (req: Request, res: Response, next: NextFunction) => {
   const { username } = req.body;

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { Document, Types } from 'mongoose';
-import {checkChatRoomIdExists} from '../../utils/checkChatRoomIdExists';
+import {checkChatRoomIdExists} from '../../utils/validation/checkChatRoomIdExists';
 
 export const checkChatRoomIdExistsMiddleware = async function(this:Document, next: Function)  {
   try {
