@@ -1,5 +1,5 @@
 import { Schema, Document, model } from 'mongoose';
-import { handleDeleteChatRoomCascade } from '../middleware/chatRoom/handleDeleteChatRoomCascadeMiddleware';
+import { handleDeleteChatRoomCascadeMiddleware } from '../middleware/chatRoom/handleDeleteChatRoomCascadeMiddleware';
 
 export interface IChatRoom extends Document {
   name: string;
@@ -15,8 +15,8 @@ const chatRoomSchema = new Schema<IChatRoom>({
   updatedAt: { type: Date, default: Date.now }
 });
 
-chatRoomSchema.pre('deleteOne', handleDeleteChatRoomCascade);
-chatRoomSchema.pre('deleteMany', handleDeleteChatRoomCascade);
-chatRoomSchema.pre('findOneAndDelete', handleDeleteChatRoomCascade);
+chatRoomSchema.pre('deleteOne', handleDeleteChatRoomCascadeMiddleware);
+chatRoomSchema.pre('deleteMany', handleDeleteChatRoomCascadeMiddleware);
+chatRoomSchema.pre('findOneAndDelete', handleDeleteChatRoomCascadeMiddleware);
 
 export const ChatRoom = model<IChatRoom>('ChatRoom', chatRoomSchema);

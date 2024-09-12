@@ -4,7 +4,7 @@ import {Message} from '../../models/message';
 
 
 // Middleware function for cascading delete
-export const handleDeleteChatRoomCascade  = async function(this: Document, next: Function) {
+export const handleDeleteChatRoomCascadeMiddleware  = async function(this: Document, next: Function) {
   const chatRoomId = this._id as Types.ObjectId;
 
   // Delete all UserChatRoom entries associated with this ChatRoom
