@@ -1,5 +1,5 @@
 import express, { Application } from 'express';
-import { connectToDatabase } from './utils/db';
+import { connectToDatabase } from './utils/database/db';
 import bodyParser from 'body-parser';
 import userRoutes from './routes/userRoutes';
 import chatRoomRoutes from './routes/chatRoomRoutes';
