@@ -1,5 +1,4 @@
 import express, { Application } from 'express';
-import { connectToDatabase } from './utils/database/db';
 import bodyParser from 'body-parser';
 import userRoutes from './routes/userRoutes';
 import chatRoomRoutes from './routes/chatRoomRoutes';
@@ -11,6 +10,7 @@ import multer from 'multer';
 import path from 'path';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { connect } from './utils/database/databaseManager';
 
 // Load environment variables
 dotenv.config();
@@ -29,7 +29,7 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-connectToDatabase();
+connect();
 
 // Multer configuration
 const storage = multer.diskStorage({
