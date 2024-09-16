@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { mongoUrl } from '../../secret';
 
-export const connectToDatabase = async () => {
+export const connect = async () => {
   try {
     await mongoose.connect(mongoUrl);
     console.log("Connected to database");
@@ -11,7 +11,7 @@ export const connectToDatabase = async () => {
   }
 };
 
-export const clearDatabase = async () => {
+export const clear = async () => {
   const collections = mongoose.connection.collections;
 
   for (const key in collections) {
@@ -20,7 +20,7 @@ export const clearDatabase = async () => {
   }
 };
 
-export const disconnectFromDatabase = async () => {
+export const disconnect = async () => {
   try {
     await mongoose.disconnect();
     console.log('Disconnected from the database');
