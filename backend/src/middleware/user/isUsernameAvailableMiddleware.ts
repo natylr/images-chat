@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { checkUsernameExists } from '../../utils/validation/checkUsernameExists';
+import { checkExistsInUser } from '../../utils/validation/checkExistsInUser';
 
 export const isUsernameAvailableMiddleware  = async (req: Request, res: Response, next: NextFunction) => {
   const { username } = req.body;
@@ -8,7 +8,7 @@ export const isUsernameAvailableMiddleware  = async (req: Request, res: Response
     return res.status(400).json({ message: 'Username is required' });
   }
 
-  if (await checkUsernameExists(username)) {
+  if (await checkExistsInUser("username", username)) {
     return res.status(400).json({ message: 'Username already exists' });
   }
 

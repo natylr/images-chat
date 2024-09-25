@@ -6,6 +6,6 @@ export const checkExistsInUser = async (fieldName: string, fieldValue: any): Pro
     return !!user;
   } catch (error) {
     console.error(error);
-    return false; // Handle errors gracefully
+    return false;
   }
 };
