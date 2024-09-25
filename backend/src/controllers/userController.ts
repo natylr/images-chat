@@ -2,10 +2,10 @@ import { Request, Response } from 'express';
 const bcrypt = require('bcryptjs')
 import jwt from 'jsonwebtoken';
 import { User, IUser } from '../models/user';
-import { checkUsernameExists } from '../utils/validation/checkUsernameExists';
 import { JWT_SECRET } from '../secret';
 import { removeHashedPassword } from '../utils/transformation/removeHashedPassword';
 import { validatePassword } from '../utils/security/validatePassword';
+import { checkExistsInUser } from '../utils/validation/checkExistsInUser';
 
 export const createUser = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -119,7 +119,7 @@ export const isUsernameAvailable = async (req: Request, res: Response) => {
     return res.status(400).json({ message: 'Username is required' });
   }
 
-  const exists = await checkUsernameExists(username as string);
+  const exists = await checkExistsInUser("username", username as string);
 
   if (exists) {
     return res.status(400).json({ message: 'Username already exists' });
