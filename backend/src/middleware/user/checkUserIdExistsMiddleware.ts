@@ -1,18 +1,26 @@
-import mongoose from "mongoose";
-import { Document, Types } from 'mongoose';
-import {checkUserIdExists} from '../../utils/validation/checkUserIdExists';
+import { Request, Response, NextFunction } from 'express';
+import { checkUserIdExists } from '../../utils/validation/checkUserIdExists';
+import mongoose from 'mongoose';
 
-export const checkUserIdExistsMiddleware = async function(this:Document, next: Function)  {
+export const checkUserIdExistsMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const userId = this._id as Types.ObjectId;
-    const user = await checkUserIdExists(userId.toString());
+    const userId = req.params.userId || req.body.userId || req.query.userId; // Extract userId from request
 
-    if (!user) {
-      throw new mongoose.Error('Invalid User Association: User with the provided userID does not exist');
+    if (!userId) {
+      return res.status(400).json({ error: 'UserID is required' });
     }
 
-    next(); 
+    const user = await checkUserIdExists(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'Invalid User Association: User with the provided userID does not exist' });
+    }
+
+    next(); // User exists, proceed to the next middleware or route handler
   } catch (error) {
-    next(error); 
+    if (error instanceof mongoose.Error) {
+      return res.status(500).json({ error: 'Database error' });
+    }
+    next(error); // Pass error to the error handling middleware
   }
 };
