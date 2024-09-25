@@ -1,7 +1,7 @@
 import { Schema, Document, model, Types } from 'mongoose';
 import { IUserChatRoomReference } from '../interfaces/IUserChatRoomReference';
-import { checkChatRoomIdExistsMiddleware } from '..//middleware//chatRoom//checkChatRoomIdExistsMiddleware.ts';
-import { updateChatRoomTimestamp } from '../utils/transformation/updateChatRoomTimestamp.ts';
+import { checkChatRoomIdExistsMiddleware } from '..//middleware//chatRoom//checkChatRoomIdExistsMiddleware';
+import { updateChatRoomTimestamp } from '../utils/transformation/updateChatRoomTimestamp';
 
 export interface IChatRoomMember extends Document, IUserChatRoomReference {
   joinedAt: Date;
