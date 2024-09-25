@@ -1,6 +1,5 @@
 import { checkChatRoomIdExists } from '../utils/validation/checkChatRoomIdExists';
 import { checkExistsInUser } from '../utils/validation/checkExistsInUser';
-import { checkUserIdExists } from '../utils/validation/checkUserIdExists';
 import mongoose, { Types } from 'mongoose';
 
 export class UserChatRoomValidator {
