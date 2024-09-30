@@ -5,11 +5,6 @@ export const createOrUpdateUserStatus = async (req: Request, res: Response) => {
   try {
     const { userID, mediaUrl } = req.body;
 
-    // Validate required fields
-    if (!userID  || !mediaUrl) {
-      return res.status(400).json({ error: 'All fields (userID, status, mediaUrl) are required.' });
-    }
-
     // Check if a status already exists for the user
     const existingStatus = await UserStatus.findOne({ userID });
 
