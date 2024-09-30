@@ -1,13 +1,38 @@
 import { Request, Response } from 'express';
 import { UserStatus, IUserStatus } from '../models/userStatus';
 
-export const createUserStatus = async (req: Request, res: Response): Promise<void> => {
+export const createOrUpdateUserStatus = async (req: Request, res: Response) => {
   try {
-    const userStatus: IUserStatus = new UserStatus(req.body);
-    await userStatus.save();
-    res.status(201).send(userStatus);
-  } catch (err) {
-    res.status(400).send(err);
+    const { userID, mediaUrl } = req.body;
+
+    // Validate required fields
+    if (!userID  || !mediaUrl) {
+      return res.status(400).json({ error: 'All fields (userID, status, mediaUrl) are required.' });
+    }
+
+    // Check if a status already exists for the user
+    const existingStatus = await UserStatus.findOne({ userID });
+
+    if (existingStatus) {
+      // Update the existing status
+      existingStatus.mediaUrl = mediaUrl;
+      existingStatus.updatedAt = new Date();
+      await existingStatus.save();
+
+      return res.status(200).json({ message: 'User status updated successfully.' });
+    } else {
+      // Create a new status
+      const newUserStatus = new UserStatus({
+        userID,
+        mediaUrl,
+      });
+
+      await newUserStatus.save();
+      return res.status(201).json({ message: 'User status created successfully.' });
+    }
+  } catch (error) {
+    console.error('Error in createOrUpdateUserStatus:', error);
+    return res.status(500).json({ error: 'An error occurred while processing the request.' });
   }
 };
 
@@ -35,7 +60,8 @@ export const getUserStatusById = async (req: Request, res: Response): Promise<vo
 
 export const updateUserStatusById = async (req: Request, res: Response): Promise<void> => {
   try {
-    const userStatus: IUserStatus | null = await UserStatus.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const userStatusData = { ...req.body, updatedAt: new Date() }
+    const userStatus: IUserStatus | null = await UserStatus.findByIdAndUpdate(req.params.id, userStatusData, { new: true, runValidators: true });
     if (!userStatus) {
       res.status(404).send();
       return;
