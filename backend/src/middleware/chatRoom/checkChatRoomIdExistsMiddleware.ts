@@ -1,18 +1,23 @@
-import mongoose from "mongoose";
-import { Document, Types } from 'mongoose';
-import {checkChatRoomIdExists} from '../../utils/validation/checkChatRoomIdExists';
+import { Request, Response, NextFunction } from 'express';
+import mongoose from 'mongoose';
+import { checkChatRoomIdExists } from '../../utils/validation/checkChatRoomIdExists';
 
-export const checkChatRoomIdExistsMiddleware = async function(this:Document, next: Function)  {
-  try {
-    const chatRoomId = this._id as Types.ObjectId;
-    const chatRoom = await checkChatRoomIdExists(chatRoomId.toString());
+export const checkChatRoomIdExistsMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { chatRoomID } = req.body || req.params || req.query; // Extract chatRoomID from any source
 
-    if (!chatRoom) {
-      throw new mongoose.Error('Invalid ChatRoom Association: ChatRoom with the provided chatRoomID does not exist');
+        if (!chatRoomID) {
+            return res.status(400).json({ error: 'chatRoomID is required' });
+        }
+
+        const chatRoomExists = await checkChatRoomIdExists(chatRoomID);
+
+        if (!chatRoomExists) {
+            return res.status(404).json({ error: 'ChatRoom with the provided ID does not exist' });
+        }
+
+        next();
+    } catch (error) {
+        next(error);
     }
-
-    next(); 
-  } catch (error) {
-    next(error); 
-  }
 };

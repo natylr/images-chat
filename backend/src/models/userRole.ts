@@ -13,5 +13,4 @@ const userRoleSchema = new Schema<IUserRole>({
   role: { type: Schema.Types.ObjectId, ref: 'Role', required: true },
   assignedAt: { type: Date, default: Date.now }
 });
-userRoleSchema.pre('save', checkChatRoomIdExistsMiddleware)
 export const UserRole = model<IUserRole>('UserRole', userRoleSchema);

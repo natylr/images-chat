@@ -13,8 +13,6 @@ const chatRoomMemberSchema = new Schema<IChatRoomMember>({
   joinedAt: { type: Date, default: Date.now },
 });
 
-chatRoomMemberSchema.pre('save', checkChatRoomIdExistsMiddleware);
-
 chatRoomMemberSchema.post('save', async function (doc: IChatRoomMember) {
   await updateChatRoomTimestamp(doc.chatRoomID);
 });
