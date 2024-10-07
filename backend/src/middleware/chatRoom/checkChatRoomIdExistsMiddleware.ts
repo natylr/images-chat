@@ -4,10 +4,10 @@ import {checkChatRoomIdExists} from '../../utils/validation/checkChatRoomIdExist
 
 export const checkChatRoomIdExistsMiddleware = async function(this:Document, next: Function)  {
   try {
-    const userId = this._id as Types.ObjectId;
-    const user = await checkChatRoomIdExists(userId.toString());
+    const chatRoomId = this._id as Types.ObjectId;
+    const chatRoom = await checkChatRoomIdExists(chatRoomId.toString());
 
-    if (!user) {
+    if (!chatRoom) {
       throw new mongoose.Error('Invalid ChatRoom Association: ChatRoom with the provided chatRoomID does not exist');
     }
 
