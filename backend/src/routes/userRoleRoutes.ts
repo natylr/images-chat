@@ -1,13 +1,13 @@
 import { Router } from 'express';
 import { createUserRole, getAllUserRoles, getUserRoleById, updateUserRoleById, deleteUserRoleById } from '../controllers/userRoleController';
-import verifyJWT from '../middleware/verifyJWT';
+import verifyJWTMiddleware from '../middleware/auth/verifyJWTverifyJWTMiddleware ';
 
 const router: Router = Router();
 
-router.post('/userroles',verifyJWT, createUserRole);
-router.get('/userroles',verifyJWT, getAllUserRoles);
-router.get('/userroles/:id',verifyJWT, getUserRoleById);
-router.put('/userroles/:id',verifyJWT, updateUserRoleById);
-router.delete('/userroles/:id',verifyJWT, deleteUserRoleById);
+router.post('/userroles',verifyJWTMiddleware, createUserRole);
+router.get('/userroles',verifyJWTMiddleware, getAllUserRoles);
+router.get('/userroles/:id',verifyJWTMiddleware, getUserRoleById);
+router.put('/userroles/:id',verifyJWTMiddleware, updateUserRoleById);
+router.delete('/userroles/:id',verifyJWTMiddleware, deleteUserRoleById);
 
 export default router;
