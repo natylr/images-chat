@@ -1,15 +1,14 @@
-import { Schema, Document, model, Types, Model } from 'mongoose';
-import { IUserChatRoomReference } from '../interfaces/IUserChatRoomReference';
+import { Schema, Document, model, Types } from 'mongoose';
 import { setupMessageMiddleware } from '../middleware/message/messageMiddleware';
 
-export interface IMessage extends Document, IUserChatRoomReference {
+export interface IMessage extends Document {
+  chatRoomMemberId: Types.ObjectId;
   content: Types.ObjectId[];
   timeStamp: Date;
 }
 
 const messageSchema = new Schema<IMessage>({
-  userID: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  chatRoomID: { type: Schema.Types.ObjectId, ref: 'ChatRoom', required: true },
+  chatRoomMemberId: { type: Schema.Types.ObjectId, ref: 'ChatRoomMember', required: true },
   content: [{ type: Schema.Types.ObjectId, ref: 'Image', required: true }],
   timeStamp: { type: Date, default: Date.now }
 });
