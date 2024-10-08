@@ -1,7 +1,7 @@
-import mongoose from 'mongoose';
 import { ChatRoomMember } from '../../src/models/chatRoomMember';
-import { ChatRoom } from '../../src/models/chatRoom'; 
-import { User } from '../../src/models/user'; 
+import { ChatRoom } from '../../src/models/chatRoom';
+import { User } from '../../src/models/user';
+
 import { connect, disconnect, clear } from '../../src/utils/database/databaseManager';
 
 beforeAll(async () => {
@@ -18,37 +18,35 @@ afterAll(async () => {
 
 describe('ChatRoomMember Model', () => {
   it('should add a member to a chat room', async () => {
-    
-    // Create a valid chat room 
+    // Create a valid chat room
     const chatRoomData = {
-        name: 'Test Room1',
-        primaryImageURL: 'http://example.com/image.png', 
-      };
+      name: 'Test Room1534',
+      primaryImageURL: 'http://example.com/image.png',
+    };
 
     const chatRoom = new ChatRoom(chatRoomData);
     await chatRoom.save();
 
-    // Create a valid user
     const userData = {
-        username: 'testuser1',
-        fname: 'Test',
-        lname: 'User',
-        email: 'testuser@example.com',
-        phone: '0545848484',
-        hashedPassword: 'hashedpassword123',
-      };
+      username: 'user234',
+      fname: 'John',
+      lname: 'Doe',
+      email: 'johndoe@example.com',
+      phone: '1234567890',
+      hashedPassword: 'hashedpassword456',
+    };
 
     const user = new User(userData);
-    await user.save(); 
-    
+    await user.save();
+
     const memberData = {
-      userID: user._id, // Use the ID of the created user
-      chatRoomID: chatRoom._id, // Use the ID of the created chat room
+      userID: user._id,
+      chatRoomID: chatRoom._id,
     };
 
     const newMember = new ChatRoomMember(memberData);
     await newMember.save();
-    
+
     const memberInDb = await ChatRoomMember.findOne({ userID: memberData.userID });
     expect(memberInDb).toBeTruthy();
     expect(memberInDb?.userID).toEqual(memberData.userID);
@@ -56,9 +54,7 @@ describe('ChatRoomMember Model', () => {
   });
 
   it('should require a userID and chatRoomID', async () => {
-    const invalidMemberData = {
-      // Missing userID and chatRoomID
-    };
+    const invalidMemberData = {};
 
     try {
       const newMember = new ChatRoomMember(invalidMemberData);
