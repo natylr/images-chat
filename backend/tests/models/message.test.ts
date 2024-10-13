@@ -23,44 +23,43 @@ describe('Message Model', () => {
   it('should create a message successfully', async () => {
 
     const userData = {
-        username: 'user123',
-        fname: 'Alice',
-        lname: 'Smith',
-        email: 'alice@example.com',
-        phone: '9876543210',
-        hashedPassword: 'hashedpassword789'
-      };
+      username: 'user123',
+      fname: 'Alice',
+      lname: 'Smith',
+      email: 'alice@example.com',
+      phone: '9876543210',
+      hashedPassword: 'hashedpassword789'
+    };
 
     const user = new User(userData);
     await user.save();
 
     const chatRoomData = {
-        name: 'Test Room156',
-        primaryImageURL: 'http://example.com/image.png', 
-      };
+      name: 'Test Room156',
+      primaryImageURL: 'http://example.com/image.png',
+    };
 
     const chatRoom = new ChatRoom(chatRoomData);
     await chatRoom.save();
-    
+
     const memberData = {
-        userID: user._id, 
-        chatRoomID: chatRoom._id, 
-      };
-  
+      userID: user._id,
+      chatRoomID: chatRoom._id,
+    };
+
     const chatRoomMember = new ChatRoomMember(memberData);
     await chatRoomMember.save();
 
     const categoryData = {
-        name: 'Nature',
-        description: 'Images related to nature',
-      };
-  
-      const category = new Category(categoryData);
-      await category.save();
-  
+      name: 'Nature'
+    };
+
+    const category = new Category(categoryData);
+    await category.save();
+
     const imageData = {
-        URL:"http://example.com/image.png",
-        category: category._id
+      URL: "http://example.com/image.png",
+      category: category._id
     }
     const image = new Image(imageData);
 
