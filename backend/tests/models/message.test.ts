@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import { Message } from '../../src/models/message';
 import { connect, disconnect, clear } from '../../src/utils/database/databaseManager';
 import { User } from '../../src/models/user';
