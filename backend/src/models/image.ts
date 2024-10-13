@@ -1,4 +1,4 @@
-import { Schema, Document, model, Types} from "mongoose";
+import mongoose, { Schema, Document, model, Types} from "mongoose";
 
 export interface IImage extends Document{
     URL: string;
@@ -8,7 +8,18 @@ export interface IImage extends Document{
 
 const imageSchema = new Schema<IImage> ({
     URL: {type: String, required:true, unique:true},
-    category:{ type: Schema.Types.ObjectId, require:true, ref: 'Category' },
+    category: {
+        type: Schema.Types.ObjectId,
+        required: [true, 'Category is required'],
+        ref: 'Category',
+        validate: {
+          validator: function (value: Types.ObjectId) {
+            // Ensure the category is a valid ObjectId
+            return mongoose.Types.ObjectId.isValid(value);
+          },
+          message: 'Category must be a valid ObjectId',
+        },
+      },
     createdAt: { type: Date, default: Date.now, required: true}
 })
 
