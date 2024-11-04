@@ -1,9 +1,9 @@
-import mongoose from 'mongoose';
 import { Category } from '../../src/models/category';
 import { connect, disconnect, clear } from '../../src/utils/database/databaseManager';
 
 beforeAll(async () => {
   await connect();
+  await clear();
 });
 
 afterEach(async () => {
