@@ -2,13 +2,13 @@ import mongoose, { Schema, Document, model, Types} from "mongoose";
 
 export interface IImage extends Document{
     URL: string;
-    category: Types.ObjectId;
+    categoryID: Types.ObjectId;
     createdAt: Date;
 }
 
 const imageSchema = new Schema<IImage> ({
     URL: {type: String, required:true, unique:true},
-    category: {
+    categoryID: {
         type: Schema.Types.ObjectId,
         required: [true, 'Category is required'],
         ref: 'Category',
