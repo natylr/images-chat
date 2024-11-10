@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { checkCategoryExists } from "../../utils/validation/checkCategoryExists";
 
-export const checkCategoryIdExistsMiddleware = async (req: Request, res: Response, next:NextFunction){
+export const checkCategoryIdExistsMiddleware = async (req: Request, res: Response, next:NextFunction)=>{
     try{
     const { categoryId } = req.body || req.params || req.query; 
 
