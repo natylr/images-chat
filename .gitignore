@@ -1,3 +1,13 @@
-node_modules
-dist
+# Ignore node_modules folders in both backend and frontend
+/backend/node_modules/
+/frontend/node_modules/
+/node_modules/
+
+# Ignore dist folders in both backend and frontend
+/backend/dist/
+/frontend/dist/
+/dist/
+
+# Ignore specific files
 /backend/src/secret.ts
+/frontend/README.md
