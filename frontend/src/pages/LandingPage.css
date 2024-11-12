@@ -1,4 +1,4 @@
-/* Basic Reset */
+/* Basic reset and container styling */
 * {
   margin: 0;
   padding: 0;
@@ -10,6 +10,13 @@ body, html, .landing-container {
   height: 100%;
   overflow: hidden;
   background-color: black;
+  position: relative;
+}
+
+/* Main container */
+.landing-container {
+  position: relative;
+  z-index: 2;
 }
 
 .landing-background {
@@ -24,12 +31,16 @@ body, html, .landing-container {
   color: #fff;
   font-family: 'Courgette', cursive;
   text-align: center;
+  z-index: 1; /* Background content */
 }
 
 .landing-buttons {
   margin-top: 1.5rem;
+  position: relative;
+  z-index: 3;
 }
 
+/* Button styling with hover effects */
 .btn {
   padding: 0.75rem 1.5rem;
   margin: 0 0.5rem;
@@ -39,14 +50,28 @@ body, html, .landing-container {
   font-size: 1rem;
   cursor: pointer;
   text-decoration: none;
+  z-index: 4;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.btn:hover {
+  transform: scale(1.05);
 }
 
 .btn-primary {
   background-color: #61dafb;
 }
 
+.btn-primary:hover {
+  background-color: #4bbbd8;
+}
+
 .btn-secondary {
   background-color: #21a179;
+}
+
+.btn-secondary:hover {
+  background-color: #33a1c2;
 }
 
 .emoji {
@@ -55,6 +80,7 @@ body, html, .landing-container {
   left: 0;
   width: 100%;
   height: 100%;
+  z-index: 0;
 }
 
 .emoji img {
