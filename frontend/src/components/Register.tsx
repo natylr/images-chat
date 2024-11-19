@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import PasswordStrengthBar from 'react-password-strength-bar';
 import './Auth.css';
 
 const Register: React.FC = () => {
@@ -22,11 +23,10 @@ const Register: React.FC = () => {
     setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
-  const isMinimalLen = (value: string, exceptedLen: number): boolean => {
-    if (exceptedLen <= value.length)
-      return true;
-    return false;
-  }
+  const isMinimalLen = (value: string, expectedLen: number): boolean => {
+    return value.length >= expectedLen;
+  };
+
   const isNextDisabled = () => {
     if (currentStep === 1) {
       return !(isMinimalLen(formData.fname, 2) && isMinimalLen(formData.lname, 2));
@@ -116,6 +116,7 @@ const Register: React.FC = () => {
                 onChange={handleChange}
                 required
               />
+              <PasswordStrengthBar password={formData.password} />
             </div>
             <div className="auth-field">
               <label htmlFor="confirmPassword">Confirm Password:</label>
