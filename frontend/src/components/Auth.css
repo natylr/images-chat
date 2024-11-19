@@ -111,3 +111,14 @@ button:disabled {
   border: 1px solid black;
   cursor: not-allowed; 
 }
+
+.register-container .auth-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem; /* Add spacing between buttons */
+  margin-top: 1.5rem; /* Adjust margin as needed */
+}
+
+.register-container .auth-buttons button {
+  flex: 1; /* Ensures equal width for buttons */
+}

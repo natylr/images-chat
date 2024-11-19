@@ -23,7 +23,6 @@ const Register: React.FC = () => {
   };
 
   const isMinimalLen = (value: string, exceptedLen: number): boolean => {
-    console.log(value, exceptedLen)
     if (exceptedLen <= value.length)
       return true;
     return false;
@@ -66,7 +65,7 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="auth-container">
+    <div className="auth-container register-container">
       <form className="auth-form" onSubmit={handleSubmit}>
         <h2>Register</h2>
         {error && <p className="auth-error">{error}</p>}
