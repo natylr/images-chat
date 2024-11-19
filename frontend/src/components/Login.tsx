@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import './Auth.css'; // Shared styles for authentication pages
+import './Auth.css';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -10,17 +10,10 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Integrate with backend API
     try {
-      // Example API call
-      // const response = await fetch('/api/login', { method: 'POST', body: JSON.stringify({ email, password }) });
-      // const data = await response.json();
-      // if (data.success) navigate('/dashboard');
-      // else setError(data.message);
-
-      // Mock success
+      // Mocked API call
       console.log('Logging in with:', { email, password });
-      navigate('/dashboard'); // Ensure you have a dashboard route
+      navigate('/dashboard'); // Replace with real API integration
     } catch (err) {
       setError('Failed to login. Please try again.');
     }
