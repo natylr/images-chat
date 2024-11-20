@@ -17,11 +17,32 @@ const Register: React.FC = () => {
   });
   const [currentStep, setCurrentStep] = useState(1);
   const [error, setError] = useState('');
+  const [passwordScore, setPasswordScore] = useState(0);
 
+  const isValidEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
+
     setFormData((prev) => ({ ...prev, [id]: value }));
+
+    // Handle specific field validations
+    if (id === 'email' && value && !isValidEmail(value)) {
+      setError('Invalid email address.');
+      return;
+    }
+
+    if ((id === 'password' || id === 'confirmPassword') && formData.confirmPassword && formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+
+    // Clear error only if there is no validation issue
+    setError('');
   };
+
 
   const isMinimalLen = (value: string, expectedLen: number): boolean => {
     return value.length >= expectedLen;
@@ -32,7 +53,7 @@ const Register: React.FC = () => {
       return !(isMinimalLen(formData.fname, 2) && isMinimalLen(formData.lname, 2));
     }
     if (currentStep === 2) {
-      return !(isMinimalLen(formData.email, 3) && isMinimalLen(formData.password, 8) && isMinimalLen(formData.confirmPassword, 8));
+      return !(!isValidEmail(formData.email) && 3 < passwordScore && formData.password === formData.confirmPassword);
     }
     if (currentStep === 3) {
       return !(isMinimalLen(formData.phone, 3)); // Address and city are optional based on your form
@@ -41,10 +62,7 @@ const Register: React.FC = () => {
   };
 
   const handleNext = () => {
-    if (currentStep === 2 && formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match.');
-      return;
-    }
+
     setError('');
     setCurrentStep((prev) => prev + 1);
   };
@@ -116,7 +134,7 @@ const Register: React.FC = () => {
                 onChange={handleChange}
                 required
               />
-              <PasswordStrengthBar password={formData.password} />
+              <PasswordStrengthBar password={formData.password} onChangeScore={setPasswordScore} />
             </div>
             <div className="auth-field">
               <label htmlFor="confirmPassword">Confirm Password:</label>
