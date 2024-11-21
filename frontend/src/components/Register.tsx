@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import PasswordStrengthBar from 'react-password-strength-bar';
 import './Auth.css';
+import { registerUser } from '../services/userServie'
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
@@ -75,10 +76,10 @@ const Register: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      console.log('Registering with:', formData);
+      const response = await registerUser(formData);
       navigate('/login');
-    } catch (err) {
-      setError('Failed to register. Please try again.');
+    } catch (err: any) {
+      setError(err.message);
     }
   };
 
