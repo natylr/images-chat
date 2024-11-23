@@ -1,13 +1,13 @@
 import { apiService } from './apiService';
 
 export const registerUser = (userData: any) => {
-  return apiService('/users', 'POST', userData);
+  return apiService.post('/users', userData);
 };
 
 export const loginUser = (credentials: any) => {
-  return apiService('/login', 'POST', credentials);
+  return apiService.post('/login', credentials);
 };
 
 export const getAllUsers = () => {
-  return apiService('/users', 'GET');
+  return apiService.get('/users');
 };
