@@ -9,7 +9,7 @@ body, html, .landing-container {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background-color: black;
+  background: linear-gradient(315deg, rgb(3, 10, 31) 3%, rgba(60,132,206,1) 38%, rgba(48,238,226,1) 68%, rgb(105, 25, 255) 98%);
   position: relative;
 }
 
@@ -27,7 +27,6 @@ body, html, .landing-container {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(#333, #000);
   color: #fff;
   font-family: 'Courgette', cursive;
   text-align: center;
