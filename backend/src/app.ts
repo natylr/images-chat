@@ -13,7 +13,7 @@ import dotenv from 'dotenv';
 import { connect } from './utils/database/databaseManager';
 
 // Load environment variables
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 const app: Application = express();
 const PORT = process.env.PORT || 3000;
@@ -22,7 +22,7 @@ const PORT = process.env.PORT || 3000;
 app.use(bodyParser.json());
 
 const corsOptions = {
-  origin: 'https://imageschatserver.com',
+  origin: 'https://imageschat.com',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
   optionsSuccessStatus: 204,
