@@ -130,24 +130,37 @@ export const isUsernameAvailable = async (req: Request, res: Response) => {
 
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { username, password } = req.body;
+    const { email, username, password } = req.body;
 
-    const user: IUser | null = await User.findOne({ username });
+    // Find the user by email or username
+    const user: IUser | null = await User.findOne({ $or: [{ email }, { username }] });
     if (!user) {
-      res.status(400).json({ message: 'Invalid username or password' });
-    } else {
+      res.status(400).json({ message: 'Invalid username/email or password' });
+    }
+    else {
+
+      // Validate password
       const isPasswordValid = await validatePassword(password, user.hashedPassword);
       if (!isPasswordValid) {
-        res.status(400).json({ message: 'Invalid username or password' });
+        res.status(400).json({ message: 'Invalid username/email or password' });
       }
 
+      // Generate JWT token
       const token = jwt.sign({ id: user._id, username: user.username }, JWT_SECRET, { expiresIn: '1h' });
-      const sanitizedUser = removeHashedPassword(user);
 
-      res.status(200).json({ token, user: sanitizedUser });
+      // Set the token in an HTTP-only cookie
+      res.cookie('token', token, {
+        httpOnly: true, // Prevent JavaScript access
+        secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+        sameSite: 'strict', // Prevent CSRF attacks
+        maxAge: 60 * 60 * 1000, // 1 hour
+      });
+
+      // Return sanitized user object and message
+      const sanitizedUser = removeHashedPassword(user);
+      res.status(200).json({ message: 'Login successful', user: sanitizedUser });
     }
   } catch (err) {
-    // Type guard to check if err is an instance of Error
     if (err instanceof Error) {
       res.status(500).json({ message: 'Internal server error', error: err.message });
     } else {
