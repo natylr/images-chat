@@ -6,6 +6,7 @@ import { JWT_SECRET } from '../secret';
 import { removeHashedPassword } from '../utils/transformation/removeHashedPassword';
 import { validatePassword } from '../utils/security/validatePassword';
 import { checkExistsInUser } from '../utils/validation/checkExistsInUser';
+import { resolve } from 'dns';
 
 export const createUser = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -168,3 +169,18 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     }
   }
 };
+
+export const logoutUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+    res.clearCookie('token', { httpOnly: true, secure: true, sameSite: 'strict' });
+    res.status(200).json({ message: 'Logged out successfully' });
+  }
+  catch (err) {
+    if (err instanceof Error) {
+      res.status(500).json({ message: 'Internal server error', error: err.message });
+    } else {
+      res.status(500).json({ message: 'Internal server error', error: String(err) });
+    }
+  }
+
+}

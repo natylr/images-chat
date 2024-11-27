@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createUser, getAllUsers, getUserById, updateUserById, deleteUserById, isUsernameAvailable, loginUser } from '../controllers/userController';
+import { createUser, getAllUsers, getUserById, updateUserById, deleteUserById, isUsernameAvailable, loginUser, logoutUser } from '../controllers/userController';
 import { isUsernameAvailableMiddleware } from '../middleware/user/isUsernameAvailableMiddleware';
 import verifyJWTMiddleware from '../middleware/auth/verifyJWTverifyJWTMiddleware';
 import { checkNotDuplicateEmailPhoneMiddleware } from '../middleware/user/checkNotDuplicateEmailPhoneMiddleware';
@@ -12,5 +12,7 @@ router.put('/users/:id',verifyJWTMiddleware, updateUserById);
 router.delete('/users/:id',verifyJWTMiddleware, deleteUserById);
 router.get('/check-username-availability',verifyJWTMiddleware, isUsernameAvailable)
 router.post('/login', loginUser);
+router.post('/logout', logoutUser);
+
 
 export default router;
