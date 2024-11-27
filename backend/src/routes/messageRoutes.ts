@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { createMessage, getAllMessages, getMessageById, updateMessageById, deleteMessageById } from '../controllers/messageController';
-import verifyJWTMiddleware from '../middleware/auth/verifyJWTverifyJWTMiddleware ';
+import verifyJWTMiddleware from '../middleware/auth/verifyJWTverifyJWTMiddleware';
 import { checkPermissionsMiddleware } from '../middleware/permissions/checkPermissionsMiddleware';
 import verifyUserOwnsResource from '../middleware/auth/verifyUserOwnsResource';
 

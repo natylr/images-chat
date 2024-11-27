@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { createUserRole, getAllUserRoles, getUserRoleById, updateUserRoleById, deleteUserRoleById } from '../controllers/userRoleController';
-import verifyJWTMiddleware from '../middleware/auth/verifyJWTverifyJWTMiddleware ';
+import verifyJWTMiddleware from '../middleware/auth/verifyJWTverifyJWTMiddleware';
 import { checkUserIdExistsMiddleware } from '../middleware/user/checkUserIdExistsMiddleware';
 import { checkChatRoomIdExistsMiddleware } from '../middleware/chatRoom/checkChatRoomIdExistsMiddleware';
 
