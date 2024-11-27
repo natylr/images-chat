@@ -54,7 +54,7 @@ const Register: React.FC = () => {
       return !(isMinimalLen(formData.fname, 2) && isMinimalLen(formData.lname, 2));
     }
     if (currentStep === 2) {
-      return !(!isValidEmail(formData.email) && 3 < passwordScore && formData.password === formData.confirmPassword);
+      return !(isValidEmail(formData.email) && 3 < passwordScore && formData.password === formData.confirmPassword);
     }
     if (currentStep === 3) {
       return !(isMinimalLen(formData.phone, 3)); // Address and city are optional based on your form
@@ -77,6 +77,7 @@ const Register: React.FC = () => {
     e.preventDefault();
     try {
       const response = await registerUser(formData);
+      console.log(response);
       navigate('/login');
     } catch (err: any) {
       setError(err.message);
