@@ -10,7 +10,7 @@ router.get('/users',verifyJWTMiddleware, getAllUsers);
 router.get('/users/:id',verifyJWTMiddleware, getUserById);
 router.put('/users/:id',verifyJWTMiddleware, updateUserById);
 router.delete('/users/:id',verifyJWTMiddleware, deleteUserById);
-router.get('/check-username-availability',verifyJWTMiddleware, isUsernameAvailable)
+router.get('/check-username-availability', isUsernameAvailable)
 router.post('/login', loginUser);
 router.post('/logout', logoutUser);
 
