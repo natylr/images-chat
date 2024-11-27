@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { checkPermissionsMiddleware } from '../middleware/permissions/checkPermissionsMiddleware';
 import { createChatRoomMember, getAllChatRoomMembers, getChatRoomMemberById, deleteChatRoomMemberById, leaveChatRoom } from '../controllers/chatRoomMemberController';
-import verifyJWTMiddleware from '../middleware/auth/verifyJWTverifyJWTMiddleware ';
+import verifyJWTMiddleware from '../middleware/auth/verifyJWTverifyJWTMiddleware';
 import verifyUserOwnsResource from '../middleware/auth/verifyUserOwnsResource'
 import { checkChatRoomIdExistsMiddleware } from '../middleware/chatRoom/checkChatRoomIdExistsMiddleware';
 const router: Router = Router();

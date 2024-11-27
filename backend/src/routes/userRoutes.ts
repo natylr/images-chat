@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { createUser, getAllUsers, getUserById, updateUserById, deleteUserById, isUsernameAvailable, loginUser } from '../controllers/userController';
 import { isUsernameAvailableMiddleware } from '../middleware/user/isUsernameAvailableMiddleware';
-import verifyJWTMiddleware from '../middleware/auth/verifyJWTverifyJWTMiddleware ';
+import verifyJWTMiddleware from '../middleware/auth/verifyJWTverifyJWTMiddleware';
 import { checkNotDuplicateEmailPhoneMiddleware } from '../middleware/user/checkNotDuplicateEmailPhoneMiddleware';
 const router = Router();
 
