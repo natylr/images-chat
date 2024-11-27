@@ -11,3 +11,4 @@
 # Ignore specific files
 /backend/src/secret.ts
 /frontend/README.md
+/backend/.env
