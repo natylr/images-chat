@@ -1,5 +1,5 @@
-import { IUser } from "../models/user";
 import { Document } from 'mongoose';
+import { IUser } from '../../models/user';
 
 export type removeHashedPasswordType = Omit<IUser, 'hashedPassword'> & Document
 
