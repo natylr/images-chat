@@ -2,11 +2,12 @@ import { Request, Response } from 'express';
 import { Image, IImage } from '../models/image';
 import { NullImage } from '../models/nullImage';
 import { getImagesByCategoryName } from '../services/imageService';
+import { error } from 'console';
 
 // Create an image
 export const createImage = async (req: Request, res: Response): Promise<void> => {
   try {
-    const imageData = { ...req.body, createAt: new Date() }; 
+    const imageData = { ...req.body, createAt: new Date() };
     const image: IImage = new Image(imageData);
     await image.save();
     res.status(201).send(image);
@@ -72,6 +73,11 @@ export const getImagesByCategoryNameHandler = async (req: Request, res: Response
     const images = await getImagesByCategoryName(req.params.categoryName);
     res.status(200).send(images);
   } catch (err) {
-    res.status(500).send({ error: err.message });
+    if (err instanceof Error) {
+      res.status(500).send({ error: err.message });
+    }
+    else {
+      res.status(500).send({ error: error });
+    }
   }
 };
