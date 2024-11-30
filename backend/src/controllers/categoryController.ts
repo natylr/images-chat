@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { Category } from '../models/category';
+import { MongoError } from 'mongodb';
 
-// Create a new category
 export const createCategory = async (req: Request, res: Response) => {
     try {
         const categoryData = { ...req.body, createdAt: new Date() }; 
@@ -9,7 +9,7 @@ export const createCategory = async (req: Request, res: Response) => {
         await newCategory.save();
         res.status(201).json(newCategory);
     } catch (error) {
-        if (error.code === 11000) { // Duplicate key error
+        if (error instanceof MongoError && error.code === 11000) { // Duplicate key error
             res.status(400).json({ message: 'Category name must be unique' });
         } else {
             res.status(500).json({ message: 'Server Error', error });
