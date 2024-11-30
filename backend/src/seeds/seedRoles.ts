@@ -1,9 +1,9 @@
-import { connectToDatabase, disconnectFromDatabase } from '../utils/db';
+import { connect, disconnect } from '../utils/database/databaseManager';
 import { Role } from '../models/role';
 import { Permission } from '../models/permission';
 
 const seedRoles = async () => {
-  await connectToDatabase();
+  await connect();
 
   try {
     const permissions = await Permission.find();
@@ -50,7 +50,7 @@ const seedRoles = async () => {
   } catch (error) {
     console.error('Error seeding roles', error);
   } finally {
-    await disconnectFromDatabase();
+    await disconnect();
   }
 };
 

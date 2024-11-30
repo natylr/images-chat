@@ -1,8 +1,8 @@
-import { connectToDatabase, disconnectFromDatabase } from '../utils/db';
 import { Permission } from '../models/permission';
+import { connect, disconnect } from '../utils/database/databaseManager';
 
 const seedPermissions = async () => {
-  await connectToDatabase();
+  await connect();
 
   const permissions = [
     { name: 'CREATE_MESSAGE', description: 'Permission to create a message in a chat room' },
@@ -24,7 +24,7 @@ const seedPermissions = async () => {
   } catch (error) {
     console.error('Error seeding permissions', error);
   } finally {
-    await disconnectFromDatabase();
+    await disconnect();
   }
 };
 
