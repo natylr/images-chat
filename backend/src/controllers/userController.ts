@@ -113,20 +113,25 @@ export const deleteUserById = async (req: Request, res: Response): Promise<void>
   }
 };
 
-export const isUsernameAvailable = async (req: Request, res: Response) => {
-  const { username } = req.query;
+export const isUsernameAvailable = async (req: Request, res: Response) => { 
+  try {
+    const { username } = req.query;
 
-  if (!username) {
-    return res.status(400).json({ message: 'Username is required' });
+    if (!username) {
+      return res.status(400).json({ error: 'Username query parameter is required' });
+    }
+
+    const exists = await checkExistsInUser("username", username as string);
+
+    if (exists) {
+      return res.status(409).json({ available: false, error: 'Username already taken' });
+    }
+
+    return res.status(200).json({ available: true });
+  } catch (error) {
+    console.error('Error checking username availability:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
-
-  const exists = await checkExistsInUser("username", username as string);
-
-  if (exists) {
-    return res.status(400).json({ message: 'Username already exists' });
-  }
-
-  return res.status(200).json({ message: 'Username is available' });
 };
 
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
