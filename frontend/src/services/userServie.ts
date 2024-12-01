@@ -11,3 +11,7 @@ export const loginUser = (credentials: any) => {
 export const getAllUsers = () => {
   return apiService.get('/users');
 };
+
+export const checkUsernameAvailability = (username: string) => {
+  return apiService.get(`/check-username-availability?username=${username}`);
+};
