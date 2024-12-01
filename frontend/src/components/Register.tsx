@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import PasswordStrengthBar from 'react-password-strength-bar';
 import './Auth.css';
-import { registerUser } from '../services/userServie'
+import { checkUsernameAvailability, registerUser } from '../services/userServie'
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
@@ -10,6 +10,7 @@ const Register: React.FC = () => {
     fname: '',
     lname: '',
     email: '',
+    username: '',
     password: '',
     confirmPassword: '',
     address: '',
@@ -19,6 +20,28 @@ const Register: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [error, setError] = useState('');
   const [passwordScore, setPasswordScore] = useState(0);
+  const [availableStatus, setAvailableStatus] = useState<number>(0);
+  const [isChecking, setIsChecking] = useState(false);
+
+  const handleCheckUsername = async () => {
+    if (!formData.username) return;
+    if (!isMinimalLen(formData.username,4)){
+      setAvailableStatus(1);
+      return
+    }
+    setIsChecking(true); // Show loader
+    setAvailableStatus(0); // Reset status
+
+    try {
+      const response = await checkUsernameAvailability(formData.username);
+      setAvailableStatus(response.available?2:3)
+    } catch (error) {
+      console.error('Error checking username availability:', error);
+      setAvailableStatus(3);
+    } finally {
+      setIsChecking(false); // Hide loader
+    }
+  };
 
   const isValidEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -54,7 +77,7 @@ const Register: React.FC = () => {
       return !(isMinimalLen(formData.fname, 2) && isMinimalLen(formData.lname, 2));
     }
     if (currentStep === 2) {
-      return !(isValidEmail(formData.email) && 3 < passwordScore && formData.password === formData.confirmPassword);
+      return !(isValidEmail(formData.email) && availableStatus === 3 && 3 < passwordScore && formData.password === formData.confirmPassword);
     }
     if (currentStep === 3) {
       return !(isMinimalLen(formData.phone, 3)); // Address and city are optional based on your form
@@ -76,10 +99,12 @@ const Register: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      console.log(formData);
       const response = await registerUser(formData);
       console.log(response);
       navigate('/login');
     } catch (err: any) {
+      console.log(err)
       setError(err.message);
     }
   };
@@ -126,6 +151,22 @@ const Register: React.FC = () => {
                 onChange={handleChange}
                 required
               />
+            </div>
+            <div className="auth-field">
+              <label htmlFor="username">Choose a Username:</label>
+              <input
+                type="text"
+                id="username"
+                value={formData.username}
+                onChange={handleChange}
+                required
+              />
+              <button type="button" onClick={handleCheckUsername} disabled={isChecking}>
+                {isChecking ? 'Checking...' : 'Check Availability'}
+              </button>
+              {availableStatus === 1 && <span style={{ color: 'red' }}>❌ Too Sort</span>}
+              {availableStatus === 2 && <span style={{ color: 'green' }}>✅ Available</span>}
+              {availableStatus === 3 && <span style={{ color: 'red' }}>❌ Taken</span>}
             </div>
             <div className="auth-field">
               <label htmlFor="password">Password:</label>
