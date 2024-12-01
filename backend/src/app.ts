@@ -22,7 +22,7 @@ const PORT = process.env.PORT || 3000;
 app.use(bodyParser.json());
 
 const corsOptions = {
-  origin: 'https://imageschat.com',
+  origin: process.env.CORS_ORIGIN?.split(',') || '*',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
   optionsSuccessStatus: 204,
