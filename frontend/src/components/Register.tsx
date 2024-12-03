@@ -25,16 +25,16 @@ const Register: React.FC = () => {
 
   const handleCheckUsername = async () => {
     if (!formData.username) return;
-    if (!isMinimalLen(formData.username,4)){
+    if (!isMinimalLen(formData.username, 4)) {
       setAvailableStatus(1);
       return
     }
     setIsChecking(true); // Show loader
-    setAvailableStatus(0); // Reset status
+    setAvailableStatus(0);
 
     try {
       const response = await checkUsernameAvailability(formData.username);
-      setAvailableStatus(response.available?2:3)
+      setAvailableStatus(response.available ? 2 : 3)
     } catch (error) {
       console.error('Error checking username availability:', error);
       setAvailableStatus(3);
@@ -56,6 +56,10 @@ const Register: React.FC = () => {
     if (id === 'email' && value && !isValidEmail(value)) {
       setError('Invalid email address.');
       return;
+    }
+
+    if (id === 'username') {
+      setAvailableStatus(0);
     }
 
     if ((id === 'password' || id === 'confirmPassword') && formData.confirmPassword && formData.password !== formData.confirmPassword) {
