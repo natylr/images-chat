@@ -10,6 +10,7 @@ interface StringByString {
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     fname: '',
     lname: '',
@@ -21,94 +22,95 @@ const Register: React.FC = () => {
     city: '',
     phone: '',
   });
+
   const [currentStep, setCurrentStep] = useState(1);
   const [error, setError] = useState('');
   const [passwordScore, setPasswordScore] = useState(0);
   const [availableStatus, setAvailableStatus] = useState<number>(0);
   const [isChecking, setIsChecking] = useState(false);
 
-  const handleCheckUsername = async () => {
-    if (!formData.username) return;
-    if (!isMinimalLen(formData.username, 4)) {
-      setAvailableStatus(1);
-      return
-    }
-    setIsChecking(true); // Show loader
-    setAvailableStatus(0);
-
-    try {
-      const response = await checkUsernameAvailability(formData.username);
-      setAvailableStatus(response.available ? 2 : 3)
-    } catch (error) {
-      console.error('Error checking username availability:', error);
-      setAvailableStatus(3);
-    } finally {
-      setIsChecking(false); // Hide loader
-    }
+  const isMinimalLen = (value: string, expectedLen: number): boolean => {
+    return value.length >= expectedLen;
   };
 
   const isValidEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
+
+  const handleCheckUsername = async () => {
+    if (!formData.username) return;
+
+    if (!isMinimalLen(formData.username, 4)) {
+      setAvailableStatus(1); // Username too short
+      return;
+    }
+
+    setIsChecking(true);
+    setAvailableStatus(0);
+
+    try {
+      const response = await checkUsernameAvailability(formData.username);
+      setAvailableStatus(response.available ? 2 : 3);
+    } catch (error) {
+      console.error('Error checking username availability:', error);
+      setAvailableStatus(3); // Assume taken in case of error
+    } finally {
+      setIsChecking(false);
+    }
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
-
     setFormData((prev) => ({ ...prev, [id]: value }));
-
-    // Validate and update field-specific errors
     validateField(id, value);
   };
 
   const validateField = (field: string, value: string) => {
-    const errorsObj: StringByString = {};
+    const errors: StringByString = {};
 
     switch (field) {
       case 'email':
         if (value && !isValidEmail(value)) {
-          errorsObj[field] = 'Invalid email address.';
+          errors[field] = 'Invalid email address.';
         }
         break;
       case 'username':
-        setAvailableStatus(0); // Reset availability status on username change
+        setAvailableStatus(0);
         break;
       case 'password':
       case 'confirmPassword':
         if (formData.password !== formData.confirmPassword) {
-          errorsObj['password'] = 'Passwords do not match.';
+          errors['password'] = 'Passwords do not match.';
         }
         break;
       default:
         break;
     }
 
-    // Update the error state for the specific field
-    const combinedErrors = Object.values(errorsObj).filter(Boolean).join(' ');
-
+    const combinedErrors = Object.values(errors).join(' ');
     setError(combinedErrors);
   };
 
-
-
-  const isMinimalLen = (value: string, expectedLen: number): boolean => {
-    return value.length >= expectedLen;
-  };
-
-  const isNextDisabled = () => {
+  const isNextDisabled = (): boolean => {
     if (currentStep === 1) {
       return !(isMinimalLen(formData.fname, 2) && isMinimalLen(formData.lname, 2));
     }
     if (currentStep === 2) {
-      return !(isValidEmail(formData.email) && availableStatus === 3 && 3 < passwordScore && formData.password === formData.confirmPassword);
+      return !(
+        isValidEmail(formData.email) &&
+        availableStatus === 2 &&
+        passwordScore > 3 &&
+        formData.password === formData.confirmPassword
+      );
     }
     if (currentStep === 3) {
-      return !(isMinimalLen(formData.phone, 3)); // Address and city are optional based on your form
+      return !isMinimalLen(formData.phone, 3);
     }
     return false;
   };
 
   const handleNext = () => {
-
     setError('');
     setCurrentStep((prev) => prev + 1);
   };
@@ -121,12 +123,11 @@ const Register: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      console.log(formData);
       const response = await registerUser(formData);
-      console.log(response);
+      console.log('Registration successful:', response);
       navigate('/login');
     } catch (err: any) {
-      console.log(err)
+      console.error('Registration error:', err);
       setError(err.message);
     }
   };
@@ -186,9 +187,9 @@ const Register: React.FC = () => {
               <button type="button" onClick={handleCheckUsername} disabled={isChecking}>
                 {isChecking ? 'Checking...' : 'Check Availability'}
               </button>
-              {availableStatus === 1 && <span style={{ color: 'red' }}>❌ Too Sort</span>}
-              {availableStatus === 2 && <span style={{ color: 'green' }}>✅ Available</span>}
-              {availableStatus === 3 && <span style={{ color: 'red' }}>❌ Taken</span>}
+              {availableStatus === 1 && <span className="status-error">❌ Too Short</span>}
+              {availableStatus === 2 && <span className="status-success">✅ Available</span>}
+              {availableStatus === 3 && <span className="status-error">❌ Taken</span>}
             </div>
             <div className="auth-field">
               <label htmlFor="password">Password:</label>
