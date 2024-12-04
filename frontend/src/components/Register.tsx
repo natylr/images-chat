@@ -4,6 +4,10 @@ import PasswordStrengthBar from 'react-password-strength-bar';
 import './Auth.css';
 import { checkUsernameAvailability, registerUser } from '../services/userServie'
 
+interface StringByString {
+  [key: string]: string;
+}
+
 const Register: React.FC = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -52,24 +56,38 @@ const Register: React.FC = () => {
 
     setFormData((prev) => ({ ...prev, [id]: value }));
 
-    // Handle specific field validations
-    if (id === 'email' && value && !isValidEmail(value)) {
-      setError('Invalid email address.');
-      return;
-    }
-
-    if (id === 'username') {
-      setAvailableStatus(0);
-    }
-
-    if ((id === 'password' || id === 'confirmPassword') && formData.confirmPassword && formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match.');
-      return;
-    }
-
-    // Clear error only if there is no validation issue
-    setError('');
+    // Validate and update field-specific errors
+    validateField(id, value);
   };
+
+  const validateField = (field: string, value: string) => {
+    const errorsObj: StringByString = {};
+
+    switch (field) {
+      case 'email':
+        if (value && !isValidEmail(value)) {
+          errorsObj[field] = 'Invalid email address.';
+        }
+        break;
+      case 'username':
+        setAvailableStatus(0); // Reset availability status on username change
+        break;
+      case 'password':
+      case 'confirmPassword':
+        if (formData.password !== formData.confirmPassword) {
+          errorsObj['password'] = 'Passwords do not match.';
+        }
+        break;
+      default:
+        break;
+    }
+
+    // Update the error state for the specific field
+    const combinedErrors = Object.values(errorsObj).filter(Boolean).join(' ');
+
+    setError(combinedErrors);
+  };
+
 
 
   const isMinimalLen = (value: string, expectedLen: number): boolean => {
