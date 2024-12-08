@@ -1,17 +1,33 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import PasswordStrengthBar from 'react-password-strength-bar';
-import './Auth.css';
 import { checkUsernameAvailability, registerUser } from '../services/userServie'
+import './Auth.css';
+import { RequiredValidator, MinLengthValidator, EmailValidator, MatchValidator, Validator, PasswordStrengthValidator } from '../utils/validators';
 
-interface StringByString {
-  [key: string]: string;
-}
-
+const validationRules: {
+  [key: number]: {
+    [field: string]: Validator[];
+  };
+} = {
+  1: {
+    fname: [new RequiredValidator(), new MinLengthValidator(2)],
+    lname: [new RequiredValidator(), new MinLengthValidator(2)],
+  },
+  2: {
+    email: [new RequiredValidator(), new EmailValidator()],
+    username: [new RequiredValidator(), new MinLengthValidator(4)],
+    password: [new RequiredValidator(), new MinLengthValidator(8), new PasswordStrengthValidator(3)],
+    confirmPassword: [new MatchValidator('password')],
+  },
+  3: {
+    phone: [new RequiredValidator(), new MinLengthValidator(3)],
+  },
+};
+const usernameStepIndex: number = 2;
 const Register: React.FC = () => {
   const navigate = useNavigate();
-
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{ [key: string]: string | number }>({
     fname: '',
     lname: '',
     email: '',
@@ -24,99 +40,86 @@ const Register: React.FC = () => {
   });
 
   const [currentStep, setCurrentStep] = useState(1);
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [passwordScore, setPasswordScore] = useState(0);
-  const [availableStatus, setAvailableStatus] = useState<number>(0);
   const [isChecking, setIsChecking] = useState(false);
+  const [availableStatus, setAvailableStatus] = useState<boolean | null>(null);
 
-  const isMinimalLen = (value: string, expectedLen: number): boolean => {
-    return value.length >= expectedLen;
+  const validateCurrentStep = async () => {
+    Object.entries(validationRules[currentStep] || {}).forEach(([field, validators]) => {
+      for (const validator of validators) {
+        const error = validator.validate(formData[field] as string, formData);
+        if (error) {
+          setErrors((prev) => ({ ...prev, [field]: error }));
+        }
+      }
+    })
+    if (currentStep === usernameStepIndex)
+      await handleCheckUsername()
+  };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    if (id === 'username')
+      setAvailableStatus(null)
+    setFormData((prev) => ({
+      ...prev,
+      [id]: value,
+      ...(id === 'password' && { passwordScore })
+    }));
+
+    const validators = validationRules[currentStep]?.[id];
+    if (validators) {
+      for (const validator of validators) {
+        const error = validator.validate(value, { ...formData, passwordScore });
+        if (error) {
+          setErrors((prev) => ({ ...prev, [id]: error }));
+          return;
+        }
+      }
+    }
+    setErrors((prev) => ({ ...prev, [id]: '' }));
   };
 
-  const isValidEmail = (email: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
 
   const handleCheckUsername = async () => {
-    if (!formData.username) return;
-
-    if (!isMinimalLen(formData.username, 4)) {
-      setAvailableStatus(1); // Username too short
-      return;
+    const validators = validationRules[usernameStepIndex]['username']; // Get the array of validators
+    for (const validator of validators) {
+      const error = validator.validate(formData.username as string, formData); // Pass formData for additional context
+      if (error) {
+        setErrors((prev) => ({ ...prev, username: error }));
+        return; // Stop further execution if there's an error
+      }
     }
 
     setIsChecking(true);
-    setAvailableStatus(0);
+    setAvailableStatus(null);
 
     try {
-      const response = await checkUsernameAvailability(formData.username);
-      setAvailableStatus(response.available ? 2 : 3);
+      const response = await checkUsernameAvailability(formData.username as string);
+      setAvailableStatus(response.available ? true : false);
     } catch (error) {
       console.error('Error checking username availability:', error);
-      setAvailableStatus(3); // Assume taken in case of error
+      setAvailableStatus(null);
     } finally {
       setIsChecking(false);
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    setFormData((prev) => ({ ...prev, [id]: value }));
-    validateField(id, value);
-  };
-
-  const validateField = (field: string, value: string) => {
-    const errors: StringByString = {};
-
-    switch (field) {
-      case 'email':
-        if (value && !isValidEmail(value)) {
-          errors[field] = 'Invalid email address.';
-        }
-        break;
-      case 'username':
-        setAvailableStatus(0);
-        break;
-      case 'password':
-      case 'confirmPassword':
-        if (formData.password !== formData.confirmPassword) {
-          errors['password'] = 'Passwords do not match.';
-        }
-        break;
-      default:
-        break;
-    }
-
-    const combinedErrors = Object.values(errors).join(' ');
-    setError(combinedErrors);
-  };
-
-  const isNextDisabled = (): boolean => {
-    if (currentStep === 1) {
-      return !(isMinimalLen(formData.fname, 2) && isMinimalLen(formData.lname, 2));
-    }
-    if (currentStep === 2) {
-      return !(
-        isValidEmail(formData.email) &&
-        availableStatus === 2 &&
-        passwordScore > 3 &&
-        formData.password === formData.confirmPassword
-      );
-    }
-    if (currentStep === 3) {
-      return !isMinimalLen(formData.phone, 3);
-    }
-    return false;
-  };
-
   const handleNext = () => {
-    setError('');
+    const stepErrors: { [key: string]: string } = {};
+
+    if (Object.keys(stepErrors).length > 0) {
+      setErrors(stepErrors);
+      return;
+    }
+
+    setErrors({});
     setCurrentStep((prev) => prev + 1);
+    validateCurrentStep()
   };
 
   const handlePrevious = () => {
-    setError('');
+    setErrors({});
     setCurrentStep((prev) => prev - 1);
   };
 
@@ -128,85 +131,64 @@ const Register: React.FC = () => {
       navigate('/login');
     } catch (err: any) {
       console.error('Registration error:', err);
-      setError(err.message);
+      alert(err.message);
     }
+  };
+  const isNextDisabled = (): boolean => {
+    if (currentStep === usernameStepIndex && !checkUsernameAvailability)
+      return false;
+
+    return Object.values(errors).some((error) => error !== '');
   };
 
   return (
-    <div className="auth-container register-container">
-      <form className="auth-form" onSubmit={handleSubmit}>
+    <div className='auth-container register-container'>
+      <form className='auth-form' onSubmit={handleSubmit}>
         <h2>Register</h2>
-        {error && <p className="auth-error">{error}</p>}
-
+        {Object.values(errors)
+          .filter(Boolean)
+          .map((error, index) => (
+            <p key={index} className='auth-error'>
+              {error}
+            </p>
+          ))}
         {currentStep === 1 && (
           <>
-            <div className="auth-field">
-              <label htmlFor="fname">First Name:</label>
-              <input
-                type="text"
-                id="fname"
-                value={formData.fname}
-                onChange={handleChange}
-                required
-              />
+            <div className='auth-field'>
+              <label htmlFor='fname'>First Name:</label>
+              <input type='text' id='fname' value={formData.fname} onChange={handleChange} required />
             </div>
-            <div className="auth-field">
-              <label htmlFor="lname">Last Name:</label>
-              <input
-                type="text"
-                id="lname"
-                value={formData.lname}
-                onChange={handleChange}
-                required
-              />
+            <div className='auth-field'>
+              <label htmlFor='lname'>Last Name:</label>
+              <input type='text' id='lname' value={formData.lname} onChange={handleChange} required />
             </div>
           </>
         )}
-
         {currentStep === 2 && (
           <>
-            <div className="auth-field">
-              <label htmlFor="email">Email:</label>
-              <input
-                type="email"
-                id="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
+            <div className='auth-field'>
+              <label htmlFor='email'>Email:</label>
+              <input type='email' id='email' value={formData.email} onChange={handleChange} required />
             </div>
-            <div className="auth-field">
-              <label htmlFor="username">Choose a Username:</label>
-              <input
-                type="text"
-                id="username"
-                value={formData.username}
-                onChange={handleChange}
-                required
-              />
-              <button type="button" onClick={handleCheckUsername} disabled={isChecking}>
+            <div className='auth-field'>
+              <label htmlFor='username'>Username:</label>
+              <input type='text' id='username' value={formData.username} onChange={handleChange} required />
+              <button type='button' onClick={handleCheckUsername} disabled={isChecking}>
                 {isChecking ? 'Checking...' : 'Check Availability'}
               </button>
-              {availableStatus === 1 && <span className="status-error">❌ Too Short</span>}
-              {availableStatus === 2 && <span className="status-success">✅ Available</span>}
-              {availableStatus === 3 && <span className="status-error">❌ Taken</span>}
+              {availableStatus === true && <span className='status-success'>✅ Available</span>}
+              {availableStatus === false && <span className='status-error'>❌ Taken</span>}
             </div>
-            <div className="auth-field">
-              <label htmlFor="password">Password:</label>
-              <input
-                type="password"
-                id="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-              />
-              <PasswordStrengthBar password={formData.password} onChangeScore={setPasswordScore} />
+            <div className='auth-field'>
+              <label htmlFor='password'>Password:</label>
+              <input type='password' id='password' value={formData.password} onChange={handleChange} required />
+              <PasswordStrengthBar password={formData.password as string} onChangeScore={setPasswordScore} />
             </div>
-            <div className="auth-field">
-              <label htmlFor="confirmPassword">Confirm Password:</label>
+            <div className='auth-field'>
+              <label htmlFor='confirmPassword'>Confirm Password:</label>
               <input
-                type="password"
-                id="confirmPassword"
+                type='password'
+                id='confirmPassword'
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 required
@@ -214,64 +196,41 @@ const Register: React.FC = () => {
             </div>
           </>
         )}
-
         {currentStep === 3 && (
           <>
-            <div className="auth-field">
-              <label htmlFor="address">Address:</label>
-              <input
-                type="text"
-                id="address"
-                value={formData.address}
-                onChange={handleChange}
-              />
+            <div className='auth-field'>
+              <label htmlFor='address'>Address:</label>
+              <input type='text' id='address' value={formData.address} onChange={handleChange} />
             </div>
-            <div className="auth-field">
-              <label htmlFor="city">City:</label>
-              <input
-                type="text"
-                id="city"
-                value={formData.city}
-                onChange={handleChange}
-              />
+            <div className='auth-field'>
+              <label htmlFor='city'>City:</label>
+              <input type='text' id='city' value={formData.city} onChange={handleChange} />
             </div>
-            <div className="auth-field">
-              <label htmlFor="phone">Phone:</label>
-              <input
-                type="text"
-                id="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                required
-              />
+            <div className='auth-field'>
+              <label htmlFor='phone'>Phone:</label>
+              <input type='text' id='phone' value={formData.phone} onChange={handleChange} required />
             </div>
           </>
         )}
-
-        <div className="auth-buttons">
+        <div className='auth-buttons'>
           {currentStep > 1 && (
-            <button type="button" className="btn btn-secondary" onClick={handlePrevious}>
+            <button type='button' className='btn btn-secondary' onClick={handlePrevious}>
               Previous
             </button>
           )}
           {currentStep < 3 ? (
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={handleNext}
-              disabled={isNextDisabled()}
-            >
+            <button type='button' className='btn btn-primary' onClick={handleNext} disabled={isNextDisabled()}>
               Next
             </button>
           ) : (
-            <button type="submit" className="btn btn-primary">
+            <button type='submit' className='btn btn-primary' disabled={isNextDisabled()}>
               Register
             </button>
           )}
         </div>
         {currentStep === 1 && (
           <p>
-            Already have an account? <Link to="/login">Login here.</Link>
+            Already have an account? <Link to='/login'>Login here.</Link>
           </p>
         )}
       </form>
