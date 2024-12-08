@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import './Auth.css';
+import { loginUser } from '../services/userServie';
+
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState<string>('');
+  const [identifier, setIdentifier] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Mocked API call
-      console.log('Logging in with:', { email, password });
-      navigate('/dashboard'); // Replace with real API integration
+      const res = await loginUser({ identifier, password });
+      navigate('/dashboard');
     } catch (err) {
       setError('Failed to login. Please try again.');
     }
@@ -25,12 +26,12 @@ const Login: React.FC = () => {
         <h2>Login</h2>
         {error && <p className="auth-error">{error}</p>}
         <div className="auth-field">
-          <label htmlFor="email">Email:</label>
+          <label htmlFor="identifier">Username or Email:</label>
           <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            id="identifier"
+            value={identifier}
+            onChange={(e) => setIdentifier(e.target.value)}
             required
           />
         </div>
