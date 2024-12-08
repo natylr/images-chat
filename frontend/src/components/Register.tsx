@@ -48,10 +48,12 @@ const Register: React.FC = () => {
   const validateCurrentStep = async () => {
     Object.entries(validationRules[currentStep] || {}).forEach(([field, validators]) => {
       for (const validator of validators) {
-        const error = validator.validate(formData[field] as string, formData);
+        const error = validator.validate(formData[field] as string, { ...formData, passwordScore });
         if (error) {
           setErrors((prev) => ({ ...prev, [field]: error }));
+          break;
         }
+        setErrors((prev) => ({ ...prev, [field]: '' }));
       }
     })
     if (currentStep === usernameStepIndex)
@@ -64,7 +66,6 @@ const Register: React.FC = () => {
     setFormData((prev) => ({
       ...prev,
       [id]: value,
-      ...(id === 'password' && { passwordScore })
     }));
 
     const validators = validationRules[currentStep]?.[id];
@@ -82,12 +83,12 @@ const Register: React.FC = () => {
 
 
   const handleCheckUsername = async () => {
-    const validators = validationRules[usernameStepIndex]['username']; // Get the array of validators
+    const validators = validationRules[usernameStepIndex]['username'];
     for (const validator of validators) {
-      const error = validator.validate(formData.username as string, formData); // Pass formData for additional context
+      const error = validator.validate(formData.username as string, formData);
       if (error) {
         setErrors((prev) => ({ ...prev, username: error }));
-        return; // Stop further execution if there's an error
+        return;
       }
     }
 
@@ -108,8 +109,9 @@ const Register: React.FC = () => {
   const handleNext = async () => {
 
     await validateCurrentStep()
-    if (!Object.values(errors).some((error) => error !== ''))
+    if (Object.values(errors).some(error => error.trim() !== ''))
       return;
+
     setErrors({});
     setCurrentStep((prev) => prev + 1);
     validateCurrentStep()
@@ -123,12 +125,16 @@ const Register: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await validateCurrentStep()
-    if (!Object.values(errors).some((error) => error !== ''))
+    if (Object.values(errors).some(error => error.trim() !== ''))
       return;
     try {
       const response = await registerUser(formData);
-      console.log('Registration successful:', response);
-      navigate('/login');
+      if (response.status === 201) {
+        alert("Registration successful");
+        navigate('/login');
+      }
+      else
+        console.log(response);
     } catch (err: any) {
       console.error('Registration error:', err);
       alert(err.message);
