@@ -105,14 +105,11 @@ const Register: React.FC = () => {
     }
   };
 
-  const handleNext = () => {
-    const stepErrors: { [key: string]: string } = {};
+  const handleNext = async () => {
 
-    if (Object.keys(stepErrors).length > 0) {
-      setErrors(stepErrors);
+    await validateCurrentStep()
+    if (!Object.values(errors).some((error) => error !== ''))
       return;
-    }
-
     setErrors({});
     setCurrentStep((prev) => prev + 1);
     validateCurrentStep()
@@ -125,6 +122,9 @@ const Register: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    await validateCurrentStep()
+    if (!Object.values(errors).some((error) => error !== ''))
+      return;
     try {
       const response = await registerUser(formData);
       console.log('Registration successful:', response);
@@ -133,12 +133,6 @@ const Register: React.FC = () => {
       console.error('Registration error:', err);
       alert(err.message);
     }
-  };
-  const isNextDisabled = (): boolean => {
-    if (currentStep === usernameStepIndex && !checkUsernameAvailability)
-      return false;
-
-    return Object.values(errors).some((error) => error !== '');
   };
 
   return (
@@ -219,11 +213,11 @@ const Register: React.FC = () => {
             </button>
           )}
           {currentStep < 3 ? (
-            <button type='button' className='btn btn-primary' onClick={handleNext} disabled={isNextDisabled()}>
+            <button type='button' className='btn btn-primary' onClick={handleNext}>
               Next
             </button>
           ) : (
-            <button type='submit' className='btn btn-primary' disabled={isNextDisabled()}>
+            <button type='submit' className='btn btn-primary'>
               Register
             </button>
           )}
