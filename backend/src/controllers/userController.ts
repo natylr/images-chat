@@ -6,7 +6,6 @@ import { JWT_SECRET } from '../secret';
 import { removeHashedPassword } from '../utils/transformation/removeHashedPassword';
 import { validatePassword } from '../utils/security/validatePassword';
 import { checkExistsInUser } from '../utils/validation/checkExistsInUser';
-import { resolve } from 'dns';
 
 export const createUser = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -113,7 +112,7 @@ export const deleteUserById = async (req: Request, res: Response): Promise<void>
   }
 };
 
-export const isUsernameAvailable = async (req: Request, res: Response) => { 
+export const isUsernameAvailable = async (req: Request, res: Response) => {
   try {
     const { username } = req.query;
 
@@ -140,6 +139,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 
     // Find the user by email or username
     const user: IUser | null = await User.findOne({ $or: [{ email }, { username }] });
+    console.log(user);
     if (!user) {
       res.status(400).json({ message: 'Invalid username/email or password' });
     }
