@@ -149,7 +149,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     const isPasswordValid = await validatePassword(password, user.hashedPassword);
     if (!isPasswordValid) {
       res.status(400).json({ message: 'Invalid username/email or password' });
-      return; 
+      return;
     }
 
     // Generate JWT token
@@ -157,20 +157,44 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 
     // Set the token in an HTTP-only cookie
     res.cookie('token', token, {
-      httpOnly: true, 
-      secure: process.env.NODE_ENV === 'production', 
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
       maxAge: 60 * 60 * 1000, // 1 hour
     });
 
     const sanitizedUser = removeHashedPassword(user);
-    res.status(200).json({ message: 'Login successful', user: sanitizedUser });
+    res.status(200).json({
+      message: 'Login successful',
+      user: sanitizedUser,
+      loggedIn: true
+    });
+
   } catch (err) {
     if (err instanceof Error) {
       res.status(500).json({ message: 'Internal server error', error: err.message });
     } else {
       res.status(500).json({ message: 'Internal server error', error: String(err) });
     }
+  }
+};
+
+export const validateSession = async (req: Request, res: Response) => {
+  try {
+    const token = req.cookies.token;
+    if (!token) {
+      return res.status(401).json({ loggedIn: false, message: 'Not authenticated' });
+    }
+
+    const decoded = jwt.verify(token, JWT_SECRET) as { id: string };
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      return res.status(401).json({ loggedIn: false, message: 'Invalid session' });
+    }
+
+    res.status(200).json({ loggedIn: true, user: { id: user.id, username: user.username } });
+  } catch (error) {
+    res.status(401).json({ loggedIn: false, message: 'Session validation failed' });
   }
 };
 
