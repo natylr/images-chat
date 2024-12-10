@@ -1,15 +1,23 @@
 import { apiService } from './apiService';
 
-export const registerUser = (userData: any) => {
+export const createUser = (userData: any) => {
   return apiService.post('/users', userData);
-};
-
-export const loginUser = (credentials: any) => {
-  return apiService.post('/login', credentials);
 };
 
 export const getAllUsers = () => {
   return apiService.get('/users');
+};
+
+export const getUserById = (id: string) => {
+  return apiService.get(`/users/${id}`);
+};
+
+export const updateUserById = (id: string, userData: any) => {
+  return apiService.put(`/users/${id}`, userData);
+};
+
+export const deleteUserById = (id: string) => {
+  return apiService.delete(`/users/${id}`);
 };
 
 export const checkUsernameAvailability = (username: string) => {

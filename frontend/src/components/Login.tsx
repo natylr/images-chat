@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import './Auth.css';
-import { loginUser } from '../services/userServie';
+import { login } from '../services/authService';
 
 
 const Login: React.FC = () => {
@@ -13,8 +13,10 @@ const Login: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await loginUser({ identifier, password });
-      navigate('/dashboard');
+      const res = await login({ identifier, password });
+      if (res.user.loggedIn) {
+        navigate('/dashboard');
+      }
     } catch (err) {
       setError('Failed to login. Please try again.');
     }

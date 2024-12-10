@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import PasswordStrengthBar from 'react-password-strength-bar';
-import { checkUsernameAvailability, registerUser } from '../services/userServie'
+import { checkUsernameAvailability, createUser } from '../services/userServie'
 import './Auth.css';
 import { RequiredValidator, MinLengthValidator, EmailValidator, MatchValidator, Validator, PasswordStrengthValidator } from '../utils/validators';
 
@@ -128,7 +128,7 @@ const Register: React.FC = () => {
     if (Object.values(errors).some(error => error.trim() !== ''))
       return;
     try {
-      const response = await registerUser(formData);
+      const response = await createUser(formData);
       if (response.status === 201) {
         alert("Registration successful");
         navigate('/login');
