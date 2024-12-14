@@ -3,7 +3,6 @@ import { ChatRoom, IChatRoom } from '../models/chatRoom';
 
 export const createChatRoom = async (req: Request, res: Response): Promise<void> => {
   try {
-    // Remove updatedAt from the request body if it exists
     const { updatedAt, ...chatRoomData } = req.body;
 
     const chatRoom: IChatRoom = new ChatRoom(chatRoomData);
@@ -13,6 +12,7 @@ export const createChatRoom = async (req: Request, res: Response): Promise<void>
     res.status(400).send(err);
   }
 };
+
 export const getAllChatRooms = async (req: Request, res: Response): Promise<void> => {
   try {
     const chatRooms: IChatRoom[] = await ChatRoom.find();
@@ -37,14 +37,13 @@ export const getChatRoomById = async (req: Request, res: Response): Promise<void
 
 export const updateChatRoomById = async (req: Request, res: Response): Promise<void> => {
   try {
-    // Extract only the fields that are allowed to be updated
     const updates = {
       name: req.body.name,
       primaryImageURL: req.body.primaryImageURL,
-      updatedAt: new Date() 
+      updatedAt: new Date(),
+      type: req.body.type
     };
 
-    // Filter out undefined properties to prevent deletion
     const filteredUpdates = Object.fromEntries(
       Object.entries(updates).filter(([_, value]) => value !== undefined)
     );
@@ -65,6 +64,7 @@ export const updateChatRoomById = async (req: Request, res: Response): Promise<v
     res.status(400).send(err);
   }
 };
+
 export const deleteChatRoomById = async (req: Request, res: Response): Promise<void> => {
   try {
     const chatRoom: IChatRoom | null = await ChatRoom.findByIdAndDelete(req.params.id);
