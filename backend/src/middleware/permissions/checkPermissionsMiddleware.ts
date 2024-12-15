@@ -16,7 +16,7 @@ interface IRolePopulated extends Omit<IRole, 'permissions'> {
 
 export const checkPermissionsMiddleware = (permissionName: string, customCheck?: (req: IUserIdRequest) => boolean) => {
   return async (req: IUserIdRequest, res: Response, next: NextFunction) => {
-    const userId = req.userId;
+    const userId = req.user?._id;
     const { chatRoomId } = req.body;
 
     try {
