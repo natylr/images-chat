@@ -6,15 +6,17 @@ import { JWT_SECRET } from '../secret';
 import { removeHashedPassword } from '../utils/transformation/removeHashedPassword';
 import { validatePassword } from '../utils/security/validatePassword';
 import { checkExistsInUser } from '../utils/validation/checkExistsInUser';
+import { decryptPassword } from '../utils/security/rsaUtils';
 
 export const createUser = async (req: Request, res: Response): Promise<void> => {
   try {
+    const decryptedPassword = decryptPassword(req.body.password);
+    const combinedString = `${decryptedPassword}${req.body.username}`;
+    const hashedPassword = await bcrypt.hash(combinedString, 10);
 
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
-
-    // Create a new user with the hashed password
     const user: IUser = new User({
       ...req.body,
+      password: undefined,
       hashedPassword: hashedPassword
     });
 
@@ -23,10 +25,10 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
 
     res.status(201).send(sanitizedUser);
   } catch (err) {
-
     res.status(400).send(err);
   }
 };
+
 
 export const getAllUsers = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -133,10 +135,12 @@ export const isUsernameAvailable = async (req: Request, res: Response) => {
   }
 };
 
-
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const { identifier, password } = req.body;
+
+    // Decrypt the password received from the client
+    const decryptedPassword = decryptPassword(password);
 
     // Find the user by either email or username
     const user: IUser | null = await User.findOne({ $or: [{ email: identifier }, { username: identifier }] });
@@ -145,8 +149,11 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Validate password
-    const isPasswordValid = await validatePassword(password, user.hashedPassword);
+    // Combine username with the decrypted password
+    const combinedString = `${decryptedPassword}${user.username}`;
+
+    // Validate the combined string
+    const isPasswordValid = await bcrypt.compare(combinedString, user.hashedPassword);
     if (!isPasswordValid) {
       res.status(400).json({ message: 'Invalid username/email or password' });
       return;
