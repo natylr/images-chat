@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import PasswordStrengthBar from 'react-password-strength-bar';
-import { checkUsernameAvailability, createUser } from '../services/userServie'
+import { checkUsernameAvailability, createUser } from '../services/userServie';
+import { fetchPublicKey, encryptPassword } from '../services/securityService';
 import './Auth.css';
 import { RequiredValidator, MinLengthValidator, EmailValidator, MatchValidator, Validator, PasswordStrengthValidator } from '../utils/validators';
 
@@ -25,6 +26,7 @@ const validationRules: {
   },
 };
 const usernameStepIndex: number = 2;
+
 const Register: React.FC = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<{ [key: string]: string | number }>({
@@ -44,6 +46,15 @@ const Register: React.FC = () => {
   const [passwordScore, setPasswordScore] = useState(0);
   const [isChecking, setIsChecking] = useState(false);
   const [availableStatus, setAvailableStatus] = useState<boolean | null>(null);
+  const [publicKey, setPublicKey] = useState<string>('');
+
+  useEffect(() => {
+    const getPublicKey = async () => {
+      const key = await fetchPublicKey();
+      setPublicKey(key);
+    };
+    getPublicKey();
+  }, []);
 
   const validateCurrentStep = async () => {
     Object.entries(validationRules[currentStep] || {}).forEach(([field, validators]) => {
@@ -55,14 +66,13 @@ const Register: React.FC = () => {
         }
         setErrors((prev) => ({ ...prev, [field]: '' }));
       }
-    })
-    if (currentStep === usernameStepIndex)
-      await handleCheckUsername()
+    });
+    if (currentStep === usernameStepIndex) await handleCheckUsername();
   };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
-    if (id === 'username')
-      setAvailableStatus(null)
+    if (id === 'username') setAvailableStatus(null);
     setFormData((prev) => ({
       ...prev,
       [id]: value,
@@ -80,7 +90,6 @@ const Register: React.FC = () => {
     }
     setErrors((prev) => ({ ...prev, [id]: '' }));
   };
-
 
   const handleCheckUsername = async () => {
     const validators = validationRules[usernameStepIndex]['username'];
@@ -107,14 +116,12 @@ const Register: React.FC = () => {
   };
 
   const handleNext = async () => {
-
-    await validateCurrentStep()
-    if (Object.values(errors).some(error => error.trim() !== ''))
-      return;
+    await validateCurrentStep();
+    if (Object.values(errors).some(error => error.trim() !== '')) return;
 
     setErrors({});
     setCurrentStep((prev) => prev + 1);
-    validateCurrentStep()
+    validateCurrentStep();
   };
 
   const handlePrevious = () => {
@@ -124,17 +131,17 @@ const Register: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await validateCurrentStep()
-    if (Object.values(errors).some(error => error.trim() !== ''))
-      return;
+    await validateCurrentStep();
+    if (Object.values(errors).some(error => error.trim() !== '')) return;
     try {
-      const response = await createUser(formData);
+      const encryptedPassword = encryptPassword(formData.password as string, publicKey);
+      const response = await createUser({ ...formData, password: encryptedPassword });
       if (response.status === 201) {
         alert("Registration successful");
         navigate('/login');
-      }
-      else
+      } else {
         console.log(response);
+      }
     } catch (err: any) {
       console.error('Registration error:', err);
       alert(err.message);
