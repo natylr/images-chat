@@ -1,24 +1,36 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { fetchPublicKey, encryptPassword } from '../services/securityService';
 
 const Login: React.FC = () => {
-  const { loginUser, user } = useAuth(); // Destructure both loginUser and user from a single useAuth call
+  const { loginUser, user } = useAuth();
   const navigate = useNavigate();
   const [identifier, setIdentifier] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
+  const [publicKey, setPublicKey] = useState<string>('');
+
+  useEffect(() => {
+    const getPublicKey = async () => {
+      const key = await fetchPublicKey();
+      setPublicKey(key);
+    };
+    getPublicKey();
+  }, []);
 
   useEffect(() => {
     if (user) {
       navigate('/dashboard'); // Redirect to the dashboard if the user is logged in
     }
   }, [user, navigate]);
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await loginUser({ identifier, password });
+      const combinedString = `${password}${identifier}`;
+      const encryptedPassword = encryptPassword(combinedString, publicKey);
+      await loginUser({ identifier, password: encryptedPassword });
       navigate('/dashboard');
     } catch (err) {
       setError('Failed to login. Please try again.');
