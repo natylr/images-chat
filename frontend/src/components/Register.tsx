@@ -134,7 +134,8 @@ const Register: React.FC = () => {
     await validateCurrentStep();
     if (Object.values(errors).some(error => error.trim() !== '')) return;
     try {
-      const encryptedPassword = encryptPassword(formData.password as string, publicKey);
+      const combinedString = `${formData.password as string}${formData.username as string}`;
+      const encryptedPassword = encryptPassword(combinedString, publicKey);
       const response = await createUser({ ...formData, password: encryptedPassword });
       if (response.status === 201) {
         alert("Registration successful");
