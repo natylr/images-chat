@@ -11,6 +11,7 @@ import path from 'path';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { connect } from './utils/database/databaseManager';
+import publicKeyRoute from './routes/publicKeyRoute';
 
 // Load environment variables
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
@@ -52,6 +53,7 @@ app.use('/api', messageRoutes);
 app.use('/api', chatRoomMemberRoutes);
 app.use('/api', userRoleRoutes);
 app.use('/api', userStatusRoutes);
+app.use('/api', publicKeyRoute);
 
 // Start server
 app.listen(PORT, () => {
