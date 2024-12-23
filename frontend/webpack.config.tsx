@@ -13,8 +13,8 @@ module.exports = {
     fallback: {
       crypto: require.resolve('crypto-browserify'),
       stream: require.resolve('stream-browserify'),
-      process: require.resolve('process/browser.js'), // Make sure this is correct
       vm: require.resolve('vm-browserify'),
+      process: false, // Add this line to ignore 'process'
     },
   },
   module: {
@@ -31,9 +31,6 @@ module.exports = {
     ],
   },
   plugins: [
-    new webpack.ProvidePlugin({
-      process: "process/browser.js", // Ensure this is correct
-    }),
     new webpack.ProvidePlugin({
       Buffer: ["buffer", "Buffer"],
     }),
